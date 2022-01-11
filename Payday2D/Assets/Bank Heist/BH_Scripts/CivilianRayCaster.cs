@@ -30,8 +30,6 @@ public class CivilianRayCaster : MonoBehaviour
 
     public LayerMask[] ignoreLayerMask;
 
-    private Collider2D playerCollider;
-
     private void Start()
     {
         for(int i = 0; i < ignoreLayerMask.Length; i++)
@@ -49,9 +47,15 @@ public class CivilianRayCaster : MonoBehaviour
         {
             if (collidersNearBy[j].gameObject.CompareTag("Player"))
             {
-                playerCollider = (Collider2D)collidersNearBy[j];
+                Vector2 civillianForward = transform.TransformDirection(Vector2.up);
+                Vector2 civillianToPlayer = collidersNearBy[j].transform.position - this.transform.position;
 
-                Debug.Log(Dot);
+                float dot = Vector2.Dot(civillianForward, civillianToPlayer);
+
+                if (dot > 0)
+                    Debug.Log(dot);
+
+                //Debug.Log(Dot);
                 //if (Dot > 0.7f)
                 //{
                 //    hit = Physics2D.Raycast(this.transform.position, dir);
