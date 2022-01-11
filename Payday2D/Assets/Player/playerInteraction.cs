@@ -40,6 +40,9 @@ public class playerInteraction : MonoBehaviour
     public Image interactionProgress;
     public TextMeshProUGUI playerInfoText;
 
+    [Header("Scripts")]
+    private PlayerMovement _playerMovement;
+
     #region player controls
 
     private PlayerControls playerControls;
@@ -49,16 +52,14 @@ public class playerInteraction : MonoBehaviour
         playerControls = new PlayerControls();
     }
 
-    private PlayerMovement pM;
-
     #endregion player controls
 
     RaycastHit2D hit;
 
     private void Start()
     {
+        _playerMovement = GetComponent<PlayerMovement>();
         playerControls.Enable();
-        pM = GetComponent<PlayerMovement>();
         interactionProgress.fillAmount = 0;
     }
 
@@ -83,32 +84,35 @@ public class playerInteraction : MonoBehaviour
                 }
             }
 
-            if (hit.collider.CompareTag("Bag") || hit.collider.CompareTag("DrillBag") || hit.collider.CompareTag("GoldBars"))
+            if(throwableObject == null)
             {
-                playerInfoText.enabled = true;
-                closeByInteractebleObject = hit.collider.gameObject;
-                interactionMax = hit.collider.gameObject.GetComponent<Bag>().interactionTime;
-                playerInfoText.text = "Hold [E] To Grab";
-            }
-
-            if (hit.collider.CompareTag("ThermalDrill"))
-            {
-                if(hit.collider.GetComponent<DrillInteraction>().drillState == DrillState.Setup || hit.collider.GetComponent<DrillInteraction>().drillState == DrillState.Failure)
+                if (hit.collider.CompareTag("Bag") || hit.collider.CompareTag("DrillBag") || hit.collider.CompareTag("GoldBars"))
                 {
-                    if(hit.collider.GetComponent<DrillInteraction>().drillState == DrillState.Setup)
-                    {
-                        playerInfoText.enabled = true;
-                        closeByInteractebleObject = hit.collider.gameObject;
-                        interactionMax = hit.collider.gameObject.GetComponent<DrillInteraction>().interactionTime;
-                        playerInfoText.text = "Hold [E] To Setup Drill";
-                    }
+                    playerInfoText.enabled = true;
+                    closeByInteractebleObject = hit.collider.gameObject;
+                    interactionMax = hit.collider.gameObject.GetComponent<Bag>().interactionTime;
+                    playerInfoText.text = "Hold [E] To Grab";
+                }
 
-                    if(hit.collider.GetComponent<DrillInteraction>().drillState == DrillState.Failure)
+                if (hit.collider.CompareTag("ThermalDrill"))
+                {
+                    if (hit.collider.GetComponent<DrillInteraction>().drillState == DrillState.Setup || hit.collider.GetComponent<DrillInteraction>().drillState == DrillState.Failure)
                     {
-                        playerInfoText.enabled = true;
-                        closeByInteractebleObject = hit.collider.gameObject;
-                        interactionMax = hit.collider.gameObject.GetComponent<DrillInteraction>().interactionTime;
-                        playerInfoText.text = "Hold [E] To Fix Drill";
+                        if (hit.collider.GetComponent<DrillInteraction>().drillState == DrillState.Setup)
+                        {
+                            playerInfoText.enabled = true;
+                            closeByInteractebleObject = hit.collider.gameObject;
+                            interactionMax = hit.collider.gameObject.GetComponent<DrillInteraction>().interactionTime;
+                            playerInfoText.text = "Hold [E] To Setup Drill";
+                        }
+
+                        if (hit.collider.GetComponent<DrillInteraction>().drillState == DrillState.Failure)
+                        {
+                            playerInfoText.enabled = true;
+                            closeByInteractebleObject = hit.collider.gameObject;
+                            interactionMax = hit.collider.gameObject.GetComponent<DrillInteraction>().interactionTime;
+                            playerInfoText.text = "Hold [E] To Fix Drill";
+                        }
                     }
                 }
             }
@@ -233,7 +237,7 @@ public class playerInteraction : MonoBehaviour
         updateInteraction();
         playerInput();
 
-        if (pM.playerMode == playerMode.Robbing)
+        if (_playerMovement.playerMode == playerMode.Robbing)
         {
             checkDoorInteraction();
             checkBagInteraction();
@@ -247,5 +251,11 @@ public class playerInteraction : MonoBehaviour
             playerInfoText.enabled = false;
             interactionMax = 0;
         }
+
+        if(interaction > 0)
+            _playerMovement.isInteracting = true;
+
+        if (interaction == 0)
+            _playerMovement.isInteracting = false;
     }
 }

@@ -30,6 +30,10 @@ public class CivilianRayCaster : MonoBehaviour
 
     public LayerMask[] ignoreLayerMask;
 
+    private Vector3 normalizedDir;
+    private Vector2 civillianForward;
+    private float dot;
+
     private void Start()
     {
         for(int i = 0; i < ignoreLayerMask.Length; i++)
@@ -41,34 +45,62 @@ public class CivilianRayCaster : MonoBehaviour
 
     private void Update()
     {
+        if (localDetection > 0)
+            Debug.Log(localDetection);
+
+        rayCast();
+        checkRayCast();
+    }
+
+    private void rayCast()
+    {
         collidersNearBy = Physics2D.OverlapCircleAll(this.transform.position, RayCastDistance);
 
-        for(int j = 0; j < collidersNearBy.Length; j++)
+        for (int j = 0; j < collidersNearBy.Length; j++)
         {
             if (collidersNearBy[j].gameObject.CompareTag("Player"))
             {
-                Vector2 civillianForward = transform.TransformDirection(Vector2.up);
-                Vector2 civillianToPlayer = collidersNearBy[j].transform.position - this.transform.position;
+                civillianForward = transform.TransformDirection(Vector2.up);
+                normalizedDir = Vector3.Normalize(collidersNearBy[j].transform.position - this.transform.position);
 
-                float dot = Vector2.Dot(civillianForward, civillianToPlayer);
+                dot = Vector2.Dot(civillianForward, normalizedDir);
 
                 if (dot > 0)
-                    Debug.Log(dot);
+                {
+                    hit = Physics2D.Raycast(this.transform.position, normalizedDir, RayCastDistance);
 
-                //Debug.Log(Dot);
-                //if (Dot > 0.7f)
-                //{
-                //    hit = Physics2D.Raycast(this.transform.position, dir);
-
-                //    if (hit.collider.CompareTag("Player"))
-                //    {
-                //        seeingPlayer = true;
-                //        Debug.Log(gameObject.name + " seeing player = true");
-                //    }
-                //    else
-                //        seeingPlayer = false;
-                //}
+                    if (hit.collider != null)
+                    {
+                        if (hit.collider.CompareTag("Player"))
+                        {
+                            seeingPlayer = true;
+                        }
+                        else
+                            seeingPlayer = false;
+                    }
+                    else
+                        seeingPlayer = false;
+                }
             }
+            else
+                seeingPlayer = false;
+        }
+    }
+
+    private void checkRayCast()
+    {
+        if(seeingPlayer == true && localDetection != 100)
+        {
+            if (hit.distance < 5f)
+                localDetection = Mathf.MoveTowards(localDetection, 100, 50 * Time.deltaTime);
+
+            if (hit.distance > 5f)
+                localDetection = Mathf.MoveTowards(localDetection, 100, 10 * Time.deltaTime);
+        }
+
+        if(seeingPlayer == false && localDetection < 100)
+        {
+            localDetection = Mathf.MoveTowards(localDetection, 0, Time.deltaTime);
         }
     }
 }

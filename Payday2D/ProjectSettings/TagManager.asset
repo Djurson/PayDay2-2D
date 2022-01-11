@@ -17,6 +17,7 @@ TagManager:
   - GoldBars
   - Civilian
   - AiTargets
+  - AiSpawnPoint
   layers:
   - Default
   - TransparentFX

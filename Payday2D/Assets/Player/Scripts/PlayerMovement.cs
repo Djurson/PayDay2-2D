@@ -33,6 +33,12 @@ public class PlayerMovement : MonoBehaviour
 
     private playerInteraction _playerInteraction;
 
+    public bool isInteracting = false;
+
+    Vector3 movementDirection;
+    Vector2 mousePosWorld;
+    Vector2 direction;
+
     private void Awake()
     {
         playerControls = new PlayerControls();
@@ -48,9 +54,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void playerFaceMousePosition()
     {
-        Vector2 mousePosWorld = cam.ScreenToWorldPoint(MousePosition);
-        Vector2 direction = new Vector2(mousePosWorld.x - transform.position.x, mousePosWorld.y - transform.position.y);
-        transform.up = direction;
+        if (isInteracting == false)
+        {
+            mousePosWorld = cam.ScreenToWorldPoint(MousePosition);
+            direction = new Vector2(mousePosWorld.x - transform.position.x, mousePosWorld.y - transform.position.y);
+            transform.up = direction;
+        }
     }
 
     private void playerInput()
@@ -82,9 +91,20 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 movementDirection = new Vector3(movement.x, movement.y, 0);
-        movementDirection.Normalize();
+        if(isInteracting == false)
+        {
+            movementDirection = new Vector3(movement.x, movement.y, 0);
+            movementDirection.Normalize();
 
-        rb.velocity = movementDirection * movementSpeed * Time.deltaTime;
+            rb.velocity = movementDirection * movementSpeed * Time.deltaTime;
+        }
+
+        if(isInteracting == true)
+        {
+            movementDirection = Vector3.zero;
+            movementDirection.Normalize();
+
+            rb.velocity = movementDirection * movementSpeed * Time.deltaTime;
+        }
     }
 }
