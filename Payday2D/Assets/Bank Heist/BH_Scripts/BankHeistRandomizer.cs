@@ -54,6 +54,8 @@ public class BankHeistRandomizer : MonoBehaviour
         GoldBars = GameObject.FindGameObjectsWithTag("GoldBars");
         AiSpawnPoints = GameObject.FindGameObjectsWithTag("AiTargets");
         AiSittingSpawnPoints = GameObject.FindGameObjectsWithTag("AiSpawnPoint");
+        AiStandingLocation = new int[AiSpawnPoints.Length];
+        AiSittingDownLocation = new int[AiSittingSpawnPoints.Length];
 
         GenerateDoors();
         GenerateGold();
@@ -121,23 +123,98 @@ public class BankHeistRandomizer : MonoBehaviour
             OpenBackDoor2.SetActive(true);
     }
 
-    private void generateStandingCivillians(int target)
+    private void generateWalkingCivillians(int target)
     {
-        int x = 0;
+        int x;
         bool Taken = false;
-        for (x = 0; x < AiStandingLocation.Length; x++)
+        if(AiStandingLocation.Length > 0)
         {
-            if (AiStandingLocation[x] == target)
+            for (x = 0; x < AiStandingLocation.Length; x++)
             {
-                target = Random.Range(0, AiSpawnPoints.Length);
-                generateStandingCivillians(target);
-                Taken = true;
+                if (AiStandingLocation[x] == target)
+                {
+                    target = Random.Range(0, AiSpawnPoints.Length);
+                    generateWalkingCivillians(target);
+                    Taken = true;
+                }
+            }
+
+            if (x == AiStandingLocation.Length && Taken == false)
+            {
+                var instatiatedCivilian = Instantiate(CivilianPrefab, AiSpawnPoints[target].transform.position, AiSpawnPoints[target].transform.rotation);
+                instatiatedCivilian.GetComponent<CivilianRayCaster>().CivilianIndex = civilianIndex;
+                civilianIndex++;
             }
         }
-
-        if(x == AiStandingLocation.Length && Taken == false)
+        else
         {
             var instatiatedCivilian = Instantiate(CivilianPrefab, AiSpawnPoints[target].transform.position, AiSpawnPoints[target].transform.rotation);
+            instatiatedCivilian.GetComponent<CivilianRayCaster>().CivilianIndex = civilianIndex;
+            civilianIndex++;
+        }
+    }
+
+    private void generateSittingCivilians(int target)
+    {
+        int x;
+        bool Taken = false;
+        if (AiSittingDownLocation.Length > 0)
+        {
+            for (x = 0; x < AiSittingDownLocation.Length; x++)
+            {
+                if (AiSittingDownLocation[x] == target)
+                {
+                    target = Random.Range(0, AiSittingDownLocation.Length);
+                    generateSittingCivilians(target);
+                    Taken = true;
+                }
+            }
+
+            if (x == AiSittingDownLocation.Length && Taken == false)
+            {
+        var instatiatedCivilian = Instantiate(CivilianPrefab, AiSittingSpawnPoints[target].transform.position, AiSittingSpawnPoints[target].transform.rotation);
+        instatiatedCivilian.GetComponent<AiPathFindingRandomTargetChooser>().enabled = false;
+        instatiatedCivilian.GetComponent<CivilianRayCaster>().CivilianIndex = civilianIndex;
+        civilianIndex++;
+            }
+        }
+        else
+        {
+            var instatiatedCivilian = Instantiate(CivilianPrefab, AiSittingSpawnPoints[target].transform.position, AiSittingSpawnPoints[target].transform.rotation);
+            instatiatedCivilian.GetComponent<AiPathFindingRandomTargetChooser>().enabled = false;
+            instatiatedCivilian.GetComponent<CivilianRayCaster>().CivilianIndex = civilianIndex;
+            civilianIndex++;
+        }
+    }
+
+    private void generateStandingCivilians(int target)
+    {
+        int x;
+        bool Taken = false;
+        if (AiStandingLocation.Length > 0)
+        {
+            for (x = 0; x < AiStandingLocation.Length; x++)
+            {
+                if (AiStandingLocation[x] == target)
+                {
+                    target = Random.Range(0, AiSpawnPoints.Length);
+                    generateWalkingCivillians(target);
+                    Taken = true;
+                }
+            }
+
+            if (x == AiStandingLocation.Length && Taken == false)
+            {
+                var instatiatedCivilian = Instantiate(CivilianPrefab, AiSpawnPoints[target].transform.position, AiSpawnPoints[target].transform.rotation);
+                instatiatedCivilian.GetComponent<AiPathFindingRandomTargetChooser>().enabled = false;
+                instatiatedCivilian.GetComponent<CivilianRayCaster>().CivilianIndex = civilianIndex;
+                civilianIndex++;
+            }
+        }
+        else
+        {
+            var instatiatedCivilian = Instantiate(CivilianPrefab, AiSpawnPoints[target].transform.position, AiSpawnPoints[target].transform.rotation);
+            instatiatedCivilian.GetComponent<AiPathFindingRandomTargetChooser>().enabled = false;
             instatiatedCivilian.GetComponent<CivilianRayCaster>().CivilianIndex = civilianIndex;
             civilianIndex++;
         }
@@ -148,24 +225,18 @@ public class BankHeistRandomizer : MonoBehaviour
         for (int i = 0; i < CiviliansRoaming; i++)
         {
             int target = Random.Range(0, AiSpawnPoints.Length);
-            generateStandingCivillians(target);
+            generateWalkingCivillians(target);
         }
         for (int x = 0; x < CiviliansStanding; x++)
         {
             int target = Random.Range(0, AiSpawnPoints.Length);
-            var instatiatedCivilian = Instantiate(CivilianPrefab, AiSpawnPoints[target].transform.position, AiSpawnPoints[target].transform.rotation);
-            instatiatedCivilian.GetComponent<AiPathFindingRandomTargetChooser>().enabled = false;
-            instatiatedCivilian.GetComponent<CivilianRayCaster>().CivilianIndex = civilianIndex;
-            civilianIndex++;
+            generateStandingCivilians(target);
         }
 
         for(int j = 0; j < CiviliansSittingDown; j++)
         {
             int target = Random.Range(0, AiSittingSpawnPoints.Length);
-            var instatiatedCivilian = Instantiate(CivilianPrefab, AiSittingSpawnPoints[target].transform.position, AiSittingSpawnPoints[target].transform.rotation);
-            instatiatedCivilian.GetComponent<AiPathFindingRandomTargetChooser>().enabled = false;
-            instatiatedCivilian.GetComponent<CivilianRayCaster>().CivilianIndex = civilianIndex;
-            civilianIndex++;
+            generateSittingCivilians(target);
         }
     }
 }
