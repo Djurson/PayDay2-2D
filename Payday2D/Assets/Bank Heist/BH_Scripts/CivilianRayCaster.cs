@@ -7,6 +7,7 @@ public enum civilianState
     Normal,
     Panicing,
     Intimidated,
+    CableTied,
     Calling
 };
 
@@ -35,6 +36,7 @@ public class CivilianRayCaster : MonoBehaviour
     private Vector3 normalizedDir;
     private Vector2 civillianForward;
     private float dot;
+    PlayerDetection localPlayerDetection;
 
     private GameObject player;
 
@@ -45,15 +47,26 @@ public class CivilianRayCaster : MonoBehaviour
             ignoreLayerMask[i] = Physics2D.IgnoreRaycastLayer;
         }
         this.gameObject.name = "Civilian: " + CivilianIndex.ToString();
+        localPlayerDetection = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerDetection>();
     }
 
     private void Update()
     {
         if (localDetection > 0)
-            GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerDetection>().detection = localDetection;
+        {
+            localPlayerDetection.detectedCivilians.Add(this);
+            if (localPlayerDetection.detection != 100 && localState != civilianState.CableTied)
+                localPlayerDetection.detection = localDetection;
+        } else if(localDetection == 0)
+            localPlayerDetection.detectedCivilians.Remove(this);
 
-        rayCast();
-        checkRayCast();
+        if (localState != civilianState.CableTied)
+        {
+            rayCast();
+            checkRayCast();
+        }
+        else
+            localDetection = 0;
     }
 
     private void rayCast()
