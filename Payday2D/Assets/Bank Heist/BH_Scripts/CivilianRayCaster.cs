@@ -19,6 +19,8 @@ public class CivilianRayCaster : MonoBehaviour
     public float RayCastDistance;
 
     public bool seeingPlayer;
+    public bool Hearing;
+    public float distanceToHearing;
 
     private float localDetection;
 
@@ -34,6 +36,8 @@ public class CivilianRayCaster : MonoBehaviour
     private Vector2 civillianForward;
     private float dot;
 
+    private GameObject player;
+
     private void Start()
     {
         for(int i = 0; i < ignoreLayerMask.Length; i++)
@@ -46,7 +50,7 @@ public class CivilianRayCaster : MonoBehaviour
     private void Update()
     {
         if (localDetection > 0)
-            Debug.Log(localDetection);
+            GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerDetection>().detection = localDetection;
 
         rayCast();
         checkRayCast();
@@ -54,37 +58,45 @@ public class CivilianRayCaster : MonoBehaviour
 
     private void rayCast()
     {
-        collidersNearBy = Physics2D.OverlapCircleAll(this.transform.position, RayCastDistance);
-
-        for (int j = 0; j < collidersNearBy.Length; j++)
+        if(player == null)
         {
-            if (collidersNearBy[j].gameObject.CompareTag("Player"))
+            collidersNearBy = Physics2D.OverlapCircleAll(this.transform.position, RayCastDistance);
+
+            for (int j = 0; j < collidersNearBy.Length; j++)
             {
-                civillianForward = transform.TransformDirection(Vector2.up);
-                normalizedDir = Vector3.Normalize(collidersNearBy[j].transform.position - this.transform.position);
-
-                dot = Vector2.Dot(civillianForward, normalizedDir);
-
-                if (dot > 0)
+                if (collidersNearBy[j].gameObject.CompareTag("Player"))
                 {
-                    hit = Physics2D.Raycast(this.transform.position, normalizedDir, RayCastDistance);
-
-                    if (hit.collider != null)
-                    {
-                        if (hit.collider.CompareTag("Player"))
-                        {
-                            seeingPlayer = true;
-                        }
-                        else
-                            seeingPlayer = false;
-                    }
-                    else
-                        seeingPlayer = false;
+                    player = collidersNearBy[j].gameObject;
                 }
             }
-            else
-                seeingPlayer = false;
         }
+
+        if(player != null)
+        {
+            civillianForward = transform.TransformDirection(Vector2.up);
+            normalizedDir = Vector3.Normalize(player.transform.position - this.transform.position);
+
+            dot = Vector2.Dot(civillianForward, normalizedDir);
+
+            if (dot > -0.77f)
+            {
+                hit = Physics2D.Raycast(this.transform.position, normalizedDir, RayCastDistance);
+
+                if (hit.collider != null)
+                {
+                    if (hit.collider.CompareTag("Player"))
+                    {
+                        seeingPlayer = true;
+                    }
+                    if(!hit.collider.CompareTag("Player"))
+                        seeingPlayer = false;
+                }
+                else
+                    seeingPlayer = false;
+            }
+        }
+        else
+            seeingPlayer = false;
     }
 
     private void checkRayCast()
@@ -98,9 +110,17 @@ public class CivilianRayCaster : MonoBehaviour
                 localDetection = Mathf.MoveTowards(localDetection, 100, 10 * Time.deltaTime);
         }
 
-        if(seeingPlayer == false && localDetection < 100)
+        if (Hearing == true)
         {
-            localDetection = Mathf.MoveTowards(localDetection, 0, Time.deltaTime);
+            if (distanceToHearing > 15)
+                localDetection = Mathf.MoveTowards(localDetection, 100, 15 * Time.deltaTime);
+            if (distanceToHearing < 15)
+                localDetection = Mathf.MoveTowards(localDetection, 100, 50 * Time.deltaTime);
+        }
+
+        if (seeingPlayer == false && localDetection < 100 && Hearing == false)
+        {
+            localDetection = Mathf.MoveTowards(localDetection, 0, 5 * Time.deltaTime);
         }
     }
 }
