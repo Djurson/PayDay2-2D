@@ -40,6 +40,8 @@ public class CivilianRayCaster : MonoBehaviour
 
     private GameObject player;
 
+    public GameObject detectionIcon;
+
     private void Start()
     {
         for(int i = 0; i < ignoreLayerMask.Length; i++)
@@ -52,12 +54,18 @@ public class CivilianRayCaster : MonoBehaviour
 
     private void Update()
     {
+        checkState();
+    }
+
+    private void checkState()
+    {
         if (localDetection > 0)
         {
             localPlayerDetection.detectedCivilians.Add(this);
             if (localPlayerDetection.detection != 100 && localState != civilianState.CableTied)
                 localPlayerDetection.detection = localDetection;
-        } else if(localDetection == 0)
+        }
+        else if (localDetection == 0)
             localPlayerDetection.detectedCivilians.Remove(this);
 
         if (localState != civilianState.CableTied)
@@ -67,6 +75,11 @@ public class CivilianRayCaster : MonoBehaviour
         }
         else
             localDetection = 0;
+
+        if (localDetection == 100)
+            detectionIcon.SetActive(true);
+        if (localDetection != 100)
+            detectionIcon.SetActive(false);
     }
 
     private void rayCast()
@@ -121,6 +134,8 @@ public class CivilianRayCaster : MonoBehaviour
 
             if (hit.distance > 5f)
                 localDetection = Mathf.MoveTowards(localDetection, 100, 10 * Time.deltaTime);
+            if(hit.distance < 2f)
+                localDetection = Mathf.MoveTowards(localDetection, 100, 100 * Time.deltaTime);
         }
 
         if (Hearing == true)

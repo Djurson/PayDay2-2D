@@ -287,12 +287,15 @@ MonoBehaviour:
   localState: 0
   RayCastDistance: 15
   seeingPlayer: 0
+  Hearing: 0
+  distanceToHearing: 0
   baseSr: {fileID: 1423494308618551813}
   collidersNearBy:
   - {fileID: 0}
   ignoreLayerMask:
   - serializedVersion: 2
     m_Bits: 512
+  detectionIcon: {fileID: 0}
 --- !u!114 &6715432271993025555
 MonoBehaviour:
   m_ObjectHideFlags: 0
