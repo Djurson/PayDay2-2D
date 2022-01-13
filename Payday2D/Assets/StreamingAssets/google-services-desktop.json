@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "652144856667",
+    "project_id": "daypay-a5d8c",
+    "storage_bucket": "daypay-a5d8c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:652144856667:android:a0077269c8ce0a45be797e",
+        "android_client_info": {
+          "package_name": "com.BulletGameStudios.DayPay"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "652144856667-uj1j9l084qai48s6rqv09jm3dgvo469i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUfVLoZzdtURcaiZRSANJJiI671aeaKdg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "652144856667-uj1j9l084qai48s6rqv09jm3dgvo469i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

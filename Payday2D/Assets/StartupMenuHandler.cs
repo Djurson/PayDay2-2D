@@ -6,14 +6,15 @@ using UnityEngine.InputSystem;
 public class StartupMenuHandler : MonoBehaviour
 {
     [SerializeField]
-    private GameObject LoginMenu;
+    private GameObject savingIcon;
 
     private void Update()
     {
         if (Keyboard.current.anyKey.wasPressedThisFrame)
         {
-            LoginMenu.SetActive(true);
+            AuthUiManager.instance.LoginScreen();
             this.gameObject.SetActive(false);
+            savingIcon.SetActive(false);
         }
     }
 }
