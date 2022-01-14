@@ -30,6 +30,7 @@ public class AuthUiManager : MonoBehaviour
     {
         loginUI.SetActive(false);
         registerUI.SetActive(false);
+        checkingForAccountUI.SetActive(false);
         FirebaseManager.instance.ClearOutputs();
     }
 

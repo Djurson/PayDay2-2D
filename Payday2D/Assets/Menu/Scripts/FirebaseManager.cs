@@ -54,12 +54,68 @@ public class FirebaseManager : MonoBehaviour
         });
     }
 
+    private void Start()
+    {
+        StartCoroutine(CheckAndFixDependencies());
+    }
+
+
     private void InitializeFirebase()
     {
         auth = FirebaseAuth.DefaultInstance;
+        StartCoroutine(CheckAutoLogin());
 
         auth.StateChanged += AuthStateChanged;
         AuthStateChanged(this, null);
+    }
+
+    private IEnumerator CheckAndFixDependencies()
+    {
+        var checkAndFixDependanciesTask = FirebaseApp.CheckAndFixDependenciesAsync();
+
+        yield return new WaitUntil(predicate: () => checkAndFixDependanciesTask.IsCompleted);
+
+        var dependancyResult = checkAndFixDependanciesTask.Result;
+
+        if(dependancyResult == DependencyStatus.Available)
+        {
+            InitializeFirebase();
+        }
+        else
+        {
+            Debug.LogError($"Could not resolve all Firebase dependancies: {dependancyResult}");
+        }
+    }
+
+    private IEnumerator CheckAutoLogin()
+    {
+        yield return new WaitForEndOfFrame();
+
+        if(user != null)
+        {
+            var reloadUserTask = user.ReloadAsync();
+
+            yield return new WaitUntil(predicate: () => reloadUserTask.IsCompleted);
+
+            AutoLogin();
+        }
+        else
+        {
+            AuthUiManager.instance.LoginScreen();
+        }
+    }
+
+    private void AutoLogin()
+    {
+        if(user != null)
+        {
+            //TOOD Email Verification
+            GameManager.instance.ChangeScene(1);
+        }
+        else
+        {
+            AuthUiManager.instance.LoginScreen();
+        }
     }
 
     private void AuthStateChanged(object sender, System.EventArgs eventArgs)
