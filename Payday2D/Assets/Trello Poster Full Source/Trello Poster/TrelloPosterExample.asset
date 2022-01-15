@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41c7f888198b7824c971f28883c2a36d, type: 3}
+  m_Name: TrelloPosterExample
+  m_EditorClassIdentifier: 
+  key: ab35a77ea912a0c17ec4cbb2f07d768f
+  token: fe4a52058d94c99ce9562ee5d60c632f77cd353ec9f7185557863c4ccb814bc9
+  boardId: 61dda1b4764ad42cdcc6aa2d
+  cardLists:
+  - name: Card List Name
+    id: 61dda3331a7a948e114c2bb7
+  cardLabels:
+  - name: Little Bug
+    id: 61e22e51cc45ff7be71f1687
+  - name: Mild
+    id: 61e22e3bac487c09ec75f117
+  - name: Severe
+    id: 61e22e30e57b7c70ed00d33c

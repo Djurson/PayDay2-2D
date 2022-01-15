@@ -71,6 +71,8 @@ public class FirebaseManager : MonoBehaviour
 
     private IEnumerator CheckAndFixDependencies()
     {
+        yield return new WaitForSeconds(2f);
+
         var checkAndFixDependanciesTask = FirebaseApp.CheckAndFixDependenciesAsync();
 
         yield return new WaitUntil(predicate: () => checkAndFixDependanciesTask.IsCompleted);
@@ -109,8 +111,14 @@ public class FirebaseManager : MonoBehaviour
     {
         if(user != null)
         {
-            //TOOD Email Verification
-            GameManager.instance.ChangeScene(1);
+            if (user.IsEmailVerified)
+            {
+                GameManager.instance.ChangeScene(1);
+            }
+            else
+            {
+                StartCoroutine(SendVerificationEmail());
+            }
         }
         else
         {
@@ -198,9 +206,7 @@ public class FirebaseManager : MonoBehaviour
             }
             else
             {
-                //Send Verification Email
-
-                GameManager.instance.ChangeScene(1);
+                StartCoroutine(SendVerificationEmail());
             }
         }
     }
@@ -279,8 +285,46 @@ public class FirebaseManager : MonoBehaviour
                 {
                     Debug.Log($"Firebase User Created Succsessfully: {user.DisplayName} ({user.UserId})");
 
-                    //TODO Send Verification Email
+                    StartCoroutine(SendVerificationEmail());
                 }
+            }
+        }
+    }
+
+    private IEnumerator SendVerificationEmail()
+    {
+        if(user != null)
+        {
+            var emailTask = user.SendEmailVerificationAsync();
+
+            yield return new WaitUntil(predicate: () => emailTask.IsCompleted);
+
+            if(emailTask.Exception != null)
+            {
+                FirebaseException firebaseException = (FirebaseException) emailTask.Exception.GetBaseException();
+                AuthError error = (AuthError) firebaseException.ErrorCode;
+
+                string output = "Unknown Error, Try Again";
+
+                switch (error)
+                {
+                    case AuthError.Cancelled:
+                        output = "Verification Was Cancelled";
+                        break;
+                    case AuthError.InvalidEmail:
+                        output = "Invalid Email";
+                        break;
+                    case AuthError.TooManyRequests:
+                        output = "To Many Requests";
+                        break;
+                }
+
+                AuthUiManager.instance.AwaitVerification(false, user.Email, output);
+            }
+            else
+            {
+                AuthUiManager.instance.AwaitVerification(true, user.Email, null);
+                Debug.Log($"EMAIL SENT SUCCESSFULLY TO: {user.Email}");
             }
         }
     }

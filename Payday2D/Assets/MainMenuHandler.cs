@@ -27,6 +27,12 @@ public class MainMenuHandler : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        ClearUi();
+        startupMenu.SetActive(true);
+    }
+
     private void Update()
     {
         if (startupMenu.activeInHierarchy)
