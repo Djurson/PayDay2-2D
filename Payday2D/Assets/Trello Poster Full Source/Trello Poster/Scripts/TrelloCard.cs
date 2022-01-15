@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 namespace Trello
 {
@@ -49,7 +50,18 @@ namespace Trello
 
 		private string GetGameState()
 		{
-			return "Add specific game state info here. Things like the players position or the current scene name.";
+			string sceneName = SceneManager.GetActiveScene().name;
+			string Username = FirebaseManager.instance.user.DisplayName;
+
+			if(SceneManager.GetActiveScene().buildIndex == 0 || SceneManager.GetActiveScene().buildIndex == 1)
+            {
+				return $"User: {Username}\nActive Scene: {sceneName}\n";
+			}
+            else
+            {
+				string PlayerPosition = GameObject.FindWithTag("Player").gameObject.transform.position.ToString();
+				return $"User: {Username}\nPlayer Position: {PlayerPosition}\nActive Scene: {sceneName}\n";
+			}
 		}
 
 		private string GetSettings()

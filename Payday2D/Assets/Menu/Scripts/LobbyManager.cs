@@ -19,6 +19,7 @@ public class LobbyManager : MonoBehaviour
 
     [Header("Basic Info References")]
     [SerializeField] private TMP_Text usernameText;
+    [SerializeField] private string beforeUsername;
 
     //[Header("Change Email References")]
     //[SerializeField]
@@ -62,9 +63,17 @@ public class LobbyManager : MonoBehaviour
     {
         if(FirebaseManager.instance.user != null)
         {
-            string username = FirebaseManager.instance.user.DisplayName;
-
-            usernameText.text = $"Welcome {username}";
+            string username;
+            if (FirebaseManager.instance.user.DisplayName != null)
+            {
+                username = FirebaseManager.instance.user.DisplayName;
+                usernameText.text = $"{beforeUsername} {username}";
+            }
+            else
+            {
+                username = $"Unknown Error";
+                usernameText.text = username;
+            }
         }
     }
 

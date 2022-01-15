@@ -16,8 +16,10 @@ MonoBehaviour:
   token: fe4a52058d94c99ce9562ee5d60c632f77cd353ec9f7185557863c4ccb814bc9
   boardId: 61dda1b4764ad42cdcc6aa2d
   cardLists:
-  - name: Card List Name
+  - name: Bug
     id: 61dda3331a7a948e114c2bb7
+  - name: Suggestion
+    id: 61e2be9bf1c127503a9603cd
   cardLabels:
   - name: Little Bug
     id: 61e22e51cc45ff7be71f1687
