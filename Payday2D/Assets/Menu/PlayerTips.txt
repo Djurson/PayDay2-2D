@@ -1,0 +1,7 @@
+You will only see civilians who are in a 25 meter radius
+Pre planning is always a way to increase your chances of having a successfull heist
+Civilians can only see you if you are less than 15 meters away from them
+You can only pickup stuff that is less than 2.5 meters away from you
+Guards and civilians will become alerted if they see bags and destroyed cameras or open vault doors
+Panicing civilians will take any chance they have to call the cops
+Your walk speed will change depending on what you are carrying

@@ -2,13 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameHandler : MonoBehaviour
+public enum thermalDrillPosition
 {
-    public static GameHandler instance;
+    AboveBank,
+    LeftOfBank,
+    BelowBank
+};
 
-    [Header("Purchased Assets")]
-    public bool BodyBags;
-    public bool ExpertDriver;
+public class BankHeistSetup : MonoBehaviour
+{
+    public static BankHeistSetup instance;
+
+    public thermalDrillPosition drillPosition;
 
     private void Awake()
     {
@@ -20,10 +25,5 @@ public class GameHandler : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
-
-    private void Start()
-    {
-        //TODO: Get if the player has purchased any assets
     }
 }

@@ -47,6 +47,12 @@ public class AuthUiManager : MonoBehaviour
         registerUI.SetActive(true);
     }
 
+    public void loadingScreen()
+    {
+        ClearUI();
+        checkingForAccountUI.SetActive(true);
+    }
+
     public void AwaitVerification(bool _emailSent, string _email, string _output)
     {
         ClearUI();

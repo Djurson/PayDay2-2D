@@ -1,52 +1,74 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BankHeistRandomizer : MonoBehaviour
 {
+    public static BankHeistRandomizer instance;
+
     [Header("Lists")]
-    public List<GameObject> BankLayouts;
-    public List<Sprite> VaultLayouts;
-    public List<Transform> PlayerSpawnLocations;
-    public GameObject[] GoldBars = new GameObject[12];
-    public GameObject[] AiSpawnPoints;
-    public GameObject[] AiSittingSpawnPoints;
+    [SerializeField] private List<GameObject> BankLayouts;
+    [SerializeField] private List<Sprite> VaultLayouts;
+    [SerializeField] private List<Transform> PlayerSpawnLocations;
+    [SerializeField] private GameObject[] GoldBars = new GameObject[12];
+    [SerializeField] private GameObject[] AiSpawnPoints;
+    [SerializeField] private GameObject[] AiSittingSpawnPoints;
 
     [Header("Ints")]
-    public int BankLayout;
-    public int VaultLayout;
-    public int PlayerSpawnLocation;
-    private int[] GoldBarsEnabled = new int[12];
-    public int TotalGoldBarsEnabled;
+    [SerializeField] private int BankLayout;
+    [SerializeField] private int VaultLayout;
+    [SerializeField] private int PlayerSpawnLocation;
+    [SerializeField] private int[] GoldBarsEnabled = new int[12];
+    [SerializeField] private int TotalGoldBarsEnabled;
 
     [Header("Prefabs")]
-    public GameObject PlayerPrefab;
-    public GameObject BackDoor1;
-    public GameObject BackDoor2;
+    [SerializeField] private GameObject PlayerPrefab;
+    [SerializeField] private GameObject BackDoor1;
+    [SerializeField] private GameObject BackDoor2;
 
     [Header("Bank Transform")]
-    public Transform Bank;
-    public Transform BankLayoutTransform;
+    [SerializeField] private Transform Bank;
+    [SerializeField] private Transform BankLayoutTransform;
 
     [Header("Game Objects")]
-    public GameObject OpenBackDoor1;
-    public GameObject OpenBackDoor2;
+    [SerializeField] private GameObject OpenBackDoor1;
+    [SerializeField] private GameObject OpenBackDoor2;
+
+    [Header("Purchased Assets")]
+    [SerializeField] private GameObject thermalDrillPrefab;
+    [SerializeField] private GameObject[] thermalDrillSpawnPosition;
+    [SerializeField] private thermalDrillPosition drillPosition;
 
     [Header("Civilians")]
     [Range(0, 20)]
-    public int CiviliansRoaming;
+    [SerializeField] private int CiviliansRoaming;
     [Range(0, 20)]
-    public int CiviliansStanding;
+    [SerializeField] private int CiviliansStanding;
     [Range(0, 20)]
-    public int CiviliansSittingDown;
-    public GameObject CivilianPrefab;
-    private int civilianIndex;
+    [SerializeField] private int CiviliansSittingDown;
+    [SerializeField] private GameObject CivilianPrefab;
+    [SerializeField] private int civilianIndex;
 
-    private int[] AiStandingLocation;
-    private int[] AiSittingDownLocation;
+    [SerializeField] private int[] AiStandingLocation;
+    [SerializeField] private int[] AiSittingDownLocation;
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+        if(instance == null)
+        {
+            instance = this;
+        } else if(instance != this)
+        {
+            Destroy(instance.gameObject);
+        }
+    }
 
     private void Start()
     {
+        if(BankHeistSetup.instance != null)
+        {
+            drillPosition = BankHeistSetup.instance.drillPosition;
+        }
         GoldBarsEnabled = new int[12];
         BankLayout = Random.Range(0, BankLayouts.Count);
         VaultLayout = Random.Range(0, VaultLayouts.Count);
@@ -56,10 +78,12 @@ public class BankHeistRandomizer : MonoBehaviour
         AiSittingSpawnPoints = GameObject.FindGameObjectsWithTag("AiSpawnPoint");
         AiStandingLocation = new int[AiSpawnPoints.Length];
         AiSittingDownLocation = new int[AiSittingSpawnPoints.Length];
+        thermalDrillSpawnPosition = GameObject.FindGameObjectsWithTag("DrillSpawnLocation");
 
         GenerateDoors();
         GenerateGold();
         generateBankCivilians();
+        spawnThermalDrill();
 
         Instantiate(PlayerPrefab, PlayerSpawnLocations[PlayerSpawnLocation].transform.position, Quaternion.identity);
 
@@ -69,6 +93,22 @@ public class BankHeistRandomizer : MonoBehaviour
             {
                 GoldBars[Random.Range(0, GoldBars.Length)].SetActive(true);
             }
+        }
+    }
+
+    private void spawnThermalDrill()
+    {
+        if(drillPosition == thermalDrillPosition.AboveBank)
+        {
+            var instantiatedThermalDrill = Instantiate(thermalDrillPrefab, thermalDrillSpawnPosition[0].transform.position, Quaternion.identity);
+        } 
+        else if(drillPosition == thermalDrillPosition.LeftOfBank)
+        {
+            var instantiatedThermalDrill = Instantiate(thermalDrillPrefab, thermalDrillSpawnPosition[1].transform.position, Quaternion.identity);
+        }
+        else if (drillPosition == thermalDrillPosition.BelowBank)
+        {
+            var instantiatedThermalDrill = Instantiate(thermalDrillPrefab, thermalDrillSpawnPosition[2].transform.position, Quaternion.identity);
         }
     }
 

@@ -18,6 +18,7 @@ TagManager:
   - Civilian
   - AiTargets
   - AiSpawnPoint
+  - DrillSpawnLocation
   layers:
   - Default
   - TransparentFX

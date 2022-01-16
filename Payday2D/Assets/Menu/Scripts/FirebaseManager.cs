@@ -3,6 +3,7 @@ using Firebase;
 using System.Collections;
 using Firebase.Auth;
 using TMPro;
+using System.IO;
 
 public class FirebaseManager : MonoBehaviour
 {
@@ -25,6 +26,9 @@ public class FirebaseManager : MonoBehaviour
     [SerializeField] private TMP_InputField registerPassword;
     [SerializeField] private TMP_InputField registerConfirmPassword;
     [SerializeField] private TMP_Text registerOutputText;
+
+    [Header("Scenes")]
+    [SerializeField] private int loadSceneIndex = 1;
 
     private void Awake()
     {
@@ -113,7 +117,15 @@ public class FirebaseManager : MonoBehaviour
         {
             if (user.IsEmailVerified)
             {
-                GameManager.instance.ChangeScene(1);
+                if (!Directory.Exists($"{Application.persistentDataPath}/Tips/"))
+                {
+                    Directory.CreateDirectory($"{Application.persistentDataPath}/Tips/");
+                    if (!File.Exists($"{Application.persistentDataPath}/Tips/Tips.txt"))
+                    {
+                        File.CreateText($"{Application.persistentDataPath}/Tips/Tips.txt");
+                    }
+                }
+                GameManager.instance.ChangeScene(loadSceneIndex);
             }
             else
             {
@@ -201,8 +213,17 @@ public class FirebaseManager : MonoBehaviour
         {
             if (user.IsEmailVerified)
             {
+                AuthUiManager.instance.loadingScreen();
+                if (!Directory.Exists($"{Application.persistentDataPath}/Tips/"))
+                {
+                    Directory.CreateDirectory($"{Application.persistentDataPath}/Tips/");
+                    if (!File.Exists($"{Application.persistentDataPath}/Tips/Tips.txt"))
+                    {
+                        File.CreateText($"{Application.persistentDataPath}/Tips/Tips.txt");
+                    }
+                }
                 yield return new WaitForSeconds(1f);
-                GameManager.instance.ChangeScene(1);
+                GameManager.instance.ChangeScene(loadSceneIndex);
             }
             else
             {

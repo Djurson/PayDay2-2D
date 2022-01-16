@@ -14,4 +14,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Menu/MainMenu.unity
     guid: 44284884579cce24b9ad80b1534ec88c
+  - enabled: 1
+    path: Assets/Menu/BankHeistSetupMenu.unity
+    guid: dcd08b67fad222f42bf96fe5a9e708f1
+  - enabled: 1
+    path: Assets/Bank Heist/BankHeist.unity
+    guid: 9f7750100e85ac247881e452eeecb48a
   m_configObjects: {}
