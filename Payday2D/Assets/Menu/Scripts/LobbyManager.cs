@@ -1,12 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
+using Firebase.Auth;
 
 public class LobbyManager : MonoBehaviour
 {
     public static LobbyManager instance;
+
+    [Header("Firebase")]
+    public FirebaseUser user;
+    [Space(5f)]
 
     //[Header("UI References")]
     //[SerializeField] private GameObject profileUI;
@@ -55,26 +57,14 @@ public class LobbyManager : MonoBehaviour
     {
         if(FirebaseManager.instance.user != null)
         {
-            LoadProfile();
+            user = FirebaseManager.instance.user;
         }
+        LoadProfile();
     }
 
     private void LoadProfile()
     {
-        if(FirebaseManager.instance.user != null)
-        {
-            string username;
-            if (FirebaseManager.instance.user.DisplayName != null)
-            {
-                username = FirebaseManager.instance.user.DisplayName;
-                usernameText.text = $"{beforeUsername} {username}";
-            }
-            else
-            {
-                username = $"Unknown Error";
-                usernameText.text = username;
-            }
-        }
+        usernameText.text = (user != null ? usernameText.text = $"{beforeUsername} {user.DisplayName}" : usernameText.text = $"Unknown Error");
     }
 
     //public void CleanUI()
