@@ -29,23 +29,21 @@ public class BankHeistSetup : MonoBehaviour
     [Header("Firebase")]
     public FirebaseUser user;
 
-    [Header("Buttons")]
-    [SerializeField] private Button playerButton;
-    [SerializeField] private Button prePlanningButton;
-    [SerializeField] private Button reportBugButton;
-
     [Header("Text")]
     [SerializeField] private string textBeforeUserName;
     [SerializeField] private TMP_Text user1DisplayText;
     [SerializeField] private TMP_Text user2DisplayText;
     [SerializeField] private TMP_Text user3DisplayText;
     [SerializeField] private TMP_Text user4DisplayText;
-    [SerializeField] private string playerStateString = "Not Ready";
+    [SerializeField] private string playerStateString;
 
     [Header("Menus")]
     [SerializeField] private GameObject playerMenu;
     [SerializeField] private GameObject prePlanningSmallMenu;
     [SerializeField] private GameObject reportBugMenu;
+    [SerializeField] private GameObject prePlanningMenu;
+
+    private PlayerControls controls;
 
     private void Awake()
     {
@@ -61,22 +59,34 @@ public class BankHeistSetup : MonoBehaviour
 
     private void Start()
     {
-        user = LobbyManager.instance.user;
-        user1DisplayText.text = $"<color=#FF855F>{textBeforeUserName}</color=#FF855F>           <color=#ffffff>{user.DisplayName}           {playerStateString}</color=#ffffff>";
-        user2DisplayText.text = $"<color=#00FF68>Player 2</color=#00FF68>           <color=#ffffff>Empty            Ready</color=#ffffff>";
-        user3DisplayText.text = $"<color=#81FBFF>Player 2</color=#81FBFF>           <color=#ffffff>Empty            Ready</color=#ffffff>";
-        user4DisplayText.text = $"<color=#F597FF>Player 2</color=#F597FF>           <color=#ffffff>Empty            Ready</color=#ffffff>";
-    }
-
-    private void Update()
-    {
-        if (playerState != playerReadyState.Ready)
+        if(LobbyManager.instance != null)
         {
+            user = LobbyManager.instance.user;
             user1DisplayText.text = $"<color=#FF855F>{textBeforeUserName}</color=#FF855F>           <color=#ffffff>{user.DisplayName}           {playerStateString}</color=#ffffff>";
         }
         else
         {
-            user1DisplayText.text = $"<color=#FF855F>{textBeforeUserName}</color=#FF855F>           <color=#ffffff>{user.DisplayName}           {playerState}</color=#ffffff>";
+            user1DisplayText.text = $"<color=#FF855F>{textBeforeUserName}</color=#FF855F>           <color=#ffffff>Player           {playerStateString}</color=#ffffff>";
+        }
+        user2DisplayText.text = $"<color=#00FF68>Player 2</color=#00FF68>           <color=#ffffff>Empty            Ready</color=#ffffff>";
+        user3DisplayText.text = $"<color=#81FBFF>Player 2</color=#81FBFF>           <color=#ffffff>Empty            Ready</color=#ffffff>";
+        user4DisplayText.text = $"<color=#F597FF>Player 2</color=#F597FF>           <color=#ffffff>Empty            Ready</color=#ffffff>";
+        ClearUI();
+        PlayerMenu();
+    }
+
+    private void Update()
+    {
+        if(LobbyManager.instance != null)
+        {
+            if (playerState != playerReadyState.Ready)
+            {
+                user1DisplayText.text = $"<color=#FF855F>{textBeforeUserName}</color=#FF855F>           <color=#ffffff>{user.DisplayName}           {playerStateString}</color=#ffffff>";
+            }
+            else
+            {
+                user1DisplayText.text = $"<color=#FF855F>{textBeforeUserName}</color=#FF855F>           <color=#ffffff>{user.DisplayName}           {playerState}</color=#ffffff>";
+            }
         }
     }
 
@@ -85,28 +95,30 @@ public class BankHeistSetup : MonoBehaviour
         playerMenu.SetActive(false);
         prePlanningSmallMenu.SetActive(false);
         reportBugMenu.SetActive(false);
-        var playerButtonNormalColor = playerButton.colors.normalColor;
+        prePlanningMenu.SetActive(false);
     }
 
     public void PlayerMenu()
     {
         ClearUI();
         playerMenu.SetActive(true);
-        currentSelectedMenu = currentMenu.Players;
     }
 
     public void PrePlanningSmallMenu()
     {
         ClearUI();
         prePlanningSmallMenu.SetActive(true);
-        playerMenu.SetActive(true);
-        currentSelectedMenu = currentMenu.Preplanning;
     }
 
     public void ReportBug()
     {
         ClearUI();
         reportBugMenu.SetActive(true);
-        currentSelectedMenu = currentMenu.ReportBug;
+    }
+
+    public void PrePlanningMenu()
+    {
+        ClearUI();
+        prePlanningMenu.SetActive(true);
     }
 }

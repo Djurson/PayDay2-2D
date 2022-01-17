@@ -65,6 +65,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""MouseScroll"",
+                    ""type"": ""Button"",
+                    ""id"": ""6d81c2e3-50d1-427a-8b7b-5b3919877e2c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -155,6 +163,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""ThrowBags"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""40ad2156-5ab9-484a-a365-e59f86b86fd3"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseScroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -169,6 +188,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_KeyboardInputs_MousePosition = m_KeyboardInputs.FindAction("MousePosition", throwIfNotFound: true);
         m_KeyboardInputs_Interact = m_KeyboardInputs.FindAction("Interact", throwIfNotFound: true);
         m_KeyboardInputs_ThrowBags = m_KeyboardInputs.FindAction("ThrowBags", throwIfNotFound: true);
+        m_KeyboardInputs_MouseScroll = m_KeyboardInputs.FindAction("MouseScroll", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -224,6 +244,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_KeyboardInputs_MousePosition;
     private readonly InputAction m_KeyboardInputs_Interact;
     private readonly InputAction m_KeyboardInputs_ThrowBags;
+    private readonly InputAction m_KeyboardInputs_MouseScroll;
     public struct KeyboardInputsActions
     {
         private @PlayerControls m_Wrapper;
@@ -234,6 +255,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @MousePosition => m_Wrapper.m_KeyboardInputs_MousePosition;
         public InputAction @Interact => m_Wrapper.m_KeyboardInputs_Interact;
         public InputAction @ThrowBags => m_Wrapper.m_KeyboardInputs_ThrowBags;
+        public InputAction @MouseScroll => m_Wrapper.m_KeyboardInputs_MouseScroll;
         public InputActionMap Get() { return m_Wrapper.m_KeyboardInputs; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -261,6 +283,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @ThrowBags.started -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnThrowBags;
                 @ThrowBags.performed -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnThrowBags;
                 @ThrowBags.canceled -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnThrowBags;
+                @MouseScroll.started -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnMouseScroll;
+                @MouseScroll.performed -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnMouseScroll;
+                @MouseScroll.canceled -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnMouseScroll;
             }
             m_Wrapper.m_KeyboardInputsActionsCallbackInterface = instance;
             if (instance != null)
@@ -283,6 +308,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @ThrowBags.started += instance.OnThrowBags;
                 @ThrowBags.performed += instance.OnThrowBags;
                 @ThrowBags.canceled += instance.OnThrowBags;
+                @MouseScroll.started += instance.OnMouseScroll;
+                @MouseScroll.performed += instance.OnMouseScroll;
+                @MouseScroll.canceled += instance.OnMouseScroll;
             }
         }
     }
@@ -295,5 +323,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnMousePosition(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
         void OnThrowBags(InputAction.CallbackContext context);
+        void OnMouseScroll(InputAction.CallbackContext context);
     }
 }
