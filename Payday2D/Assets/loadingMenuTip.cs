@@ -5,6 +5,8 @@ using System.Collections;
 
 public class loadingMenuTip : MonoBehaviour
 {
+    [SerializeField] private int tip;
+    [SerializeField] private int tipSaved;
     [SerializeField] private string[] TipsTextFileTextLines;
     [SerializeField] private TMP_Text TmpTextTip;
 
@@ -14,9 +16,27 @@ public class loadingMenuTip : MonoBehaviour
         {
             if (File.Exists($"{Application.persistentDataPath}/Tips/Tips.txt")) TipsTextFileTextLines = File.ReadAllLines($"{Application.persistentDataPath}/Tips/Tips.txt");
         }
-        TmpTextTip.text = $"Tip: {TipsTextFileTextLines[Random.Range(0, TipsTextFileTextLines.Length)]}";
+        tip = Random.Range(0, TipsTextFileTextLines.Length);
+        tipSaved = tip;
+
+        TmpTextTip.text = $"Tip: {TipsTextFileTextLines[tip]}";
 
         StartCoroutine(changeTip());
+    }
+
+    private void generateTip()
+    {
+        tip = Random.Range(0, TipsTextFileTextLines.Length);
+
+        if(tip == tipSaved)
+        {
+            generateTip();
+        } else if(tip != tipSaved)
+        {
+            tipSaved = tip;
+
+            TmpTextTip.text = $"Tip: {TipsTextFileTextLines[tip]}";
+        }
     }
 
     private IEnumerator changeTip()
@@ -27,7 +47,7 @@ public class loadingMenuTip : MonoBehaviour
         {
             yield return delay;
 
-            TmpTextTip.text = $"Tip: {TipsTextFileTextLines[Random.Range(0, TipsTextFileTextLines.Length)]}";
+            generateTip();
         }
     }
 }

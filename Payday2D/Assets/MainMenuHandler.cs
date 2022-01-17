@@ -58,11 +58,14 @@ public class MainMenuHandler : MonoBehaviour
 
     private void Update()
     {
-        if (startupMenu.activeInHierarchy)
+        if(startupMenu != null)
         {
-            if (Keyboard.current.anyKey.wasPressedThisFrame)
+            if (startupMenu.activeInHierarchy)
             {
-                ActivateMainMenu();
+                if (Keyboard.current.anyKey.wasPressedThisFrame)
+                {
+                    ActivateMainMenu();
+                }
             }
         }
 
@@ -124,7 +127,7 @@ public class MainMenuHandler : MonoBehaviour
     {
         ClearUI();
         loadingMenu.SetActive(true);
-        yield return new WaitForSeconds(12);
+        yield return new WaitForSeconds(3);
         SceneManager.LoadSceneAsync(_sceneIndex);
     }
 }
