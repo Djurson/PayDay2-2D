@@ -1,6 +1,8 @@
 using UnityEngine;
 using TMPro;
 using Firebase.Auth;
+using System.Collections;
+using Firebase;
 
 public class LobbyManager : MonoBehaviour
 {
@@ -8,6 +10,7 @@ public class LobbyManager : MonoBehaviour
 
     [Header("Firebase")]
     public FirebaseUser user;
+    public FirebaseAuth auth;
     [Space(5f)]
 
     //[Header("UI References")]
@@ -22,6 +25,7 @@ public class LobbyManager : MonoBehaviour
     [Header("Basic Info References")]
     [SerializeField] private TMP_Text usernameText;
     [SerializeField] private string beforeUsername;
+    private string email;
 
     //[Header("Change Email References")]
     //[SerializeField]
@@ -58,6 +62,7 @@ public class LobbyManager : MonoBehaviour
         if(FirebaseManager.instance.user != null)
         {
             user = FirebaseManager.instance.user;
+            auth = FirebaseManager.instance.auth;
         }
         LoadProfile();
     }
@@ -67,6 +72,11 @@ public class LobbyManager : MonoBehaviour
         usernameText.text = (user != null ? usernameText.text = $"{beforeUsername} {user.DisplayName}" : usernameText.text = $"Unknown Error");
     }
 
+
+    public void UserSignOut()
+    {
+        auth.SignOut();
+    }
     //public void CleanUI()
     //{
     //    profileUI.SetActive(false);
