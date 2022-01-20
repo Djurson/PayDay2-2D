@@ -102,11 +102,11 @@ public class BankHeistRandomizer : MonoBehaviour
         {
             var instantiatedThermalDrill = Instantiate(thermalDrillPrefab, thermalDrillSpawnPosition[0].transform.position, Quaternion.identity);
         } 
-        else if(drillPosition == thermalDrillPosition.LeftOfBank)
+        else if(drillPosition == thermalDrillPosition.LeftOfBank1)
         {
             var instantiatedThermalDrill = Instantiate(thermalDrillPrefab, thermalDrillSpawnPosition[1].transform.position, Quaternion.identity);
         }
-        else if (drillPosition == thermalDrillPosition.BelowBank)
+        else if (drillPosition == thermalDrillPosition.LeftOfBank2)
         {
             var instantiatedThermalDrill = Instantiate(thermalDrillPrefab, thermalDrillSpawnPosition[2].transform.position, Quaternion.identity);
         }

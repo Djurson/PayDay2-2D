@@ -87,6 +87,7 @@ GameObject:
   - component: {fileID: 851815780642041620}
   - component: {fileID: 4441238323007274159}
   - component: {fileID: 1045454850587768921}
+  - component: {fileID: 7967238879987694110}
   m_Layer: 6
   m_Name: BH_Player
   m_TagString: Player
@@ -224,6 +225,19 @@ MonoBehaviour:
   detection: 0
   detectedText: {fileID: 7438714486724067335}
   detectedCivilians: []
+--- !u!114 &7967238879987694110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 851815780642041619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04e6189dd521c8141a1f07fc7ce13421, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UsernameText: {fileID: 3735533185120340963}
 --- !u!1 &1110998645863057735
 GameObject:
   m_ObjectHideFlags: 0

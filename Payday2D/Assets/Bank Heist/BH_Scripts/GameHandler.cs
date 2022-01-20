@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Firebase.Auth;
 
 public class GameHandler : MonoBehaviour
 {
@@ -9,6 +10,10 @@ public class GameHandler : MonoBehaviour
     [Header("Purchased Assets")]
     public bool BodyBags;
     public bool ExpertDriver;
+
+    [Header("Firebase")]
+    public FirebaseUser user;
+    public FirebaseAuth auth;
 
     private void Awake()
     {
@@ -20,10 +25,12 @@ public class GameHandler : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        auth = BankHeistSetup.instance.auth;
     }
 
     private void Start()
     {
+        user = auth.CurrentUser;
         //TODO: Get if the player has purchased any assets
     }
 }

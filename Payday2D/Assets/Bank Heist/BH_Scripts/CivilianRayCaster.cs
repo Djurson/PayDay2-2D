@@ -76,10 +76,13 @@ public class CivilianRayCaster : MonoBehaviour
         else
             localDetection = 0;
 
-        if (localDetection == 100)
-            detectionIcon.SetActive(true);
-        if (localDetection != 100)
-            detectionIcon.SetActive(false);
+        if(detectionIcon != null)
+        {
+            if (localDetection == 100)
+                detectionIcon.SetActive(true);
+            if (localDetection != 100)
+                detectionIcon.SetActive(false);
+        }
     }
 
     private void rayCast()
