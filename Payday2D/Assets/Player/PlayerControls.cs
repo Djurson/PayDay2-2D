@@ -89,6 +89,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""ChangeFireMode"",
+                    ""type"": ""Button"",
+                    ""id"": ""82369aaa-c500-47d3-9305-914f5706df55"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -212,6 +220,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Aim"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f216bee7-d86f-4928-aa9c-6df864db6e79"",
+                    ""path"": ""<Keyboard>/v"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeFireMode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -229,6 +248,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_KeyboardInputs_MouseFire = m_KeyboardInputs.FindAction("MouseFire", throwIfNotFound: true);
         m_KeyboardInputs_Reload = m_KeyboardInputs.FindAction("Reload", throwIfNotFound: true);
         m_KeyboardInputs_Aim = m_KeyboardInputs.FindAction("Aim", throwIfNotFound: true);
+        m_KeyboardInputs_ChangeFireMode = m_KeyboardInputs.FindAction("ChangeFireMode", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -287,6 +307,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_KeyboardInputs_MouseFire;
     private readonly InputAction m_KeyboardInputs_Reload;
     private readonly InputAction m_KeyboardInputs_Aim;
+    private readonly InputAction m_KeyboardInputs_ChangeFireMode;
     public struct KeyboardInputsActions
     {
         private @PlayerControls m_Wrapper;
@@ -300,6 +321,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @MouseFire => m_Wrapper.m_KeyboardInputs_MouseFire;
         public InputAction @Reload => m_Wrapper.m_KeyboardInputs_Reload;
         public InputAction @Aim => m_Wrapper.m_KeyboardInputs_Aim;
+        public InputAction @ChangeFireMode => m_Wrapper.m_KeyboardInputs_ChangeFireMode;
         public InputActionMap Get() { return m_Wrapper.m_KeyboardInputs; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -336,6 +358,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Aim.started -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnAim;
                 @Aim.performed -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnAim;
                 @Aim.canceled -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnAim;
+                @ChangeFireMode.started -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnChangeFireMode;
+                @ChangeFireMode.performed -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnChangeFireMode;
+                @ChangeFireMode.canceled -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnChangeFireMode;
             }
             m_Wrapper.m_KeyboardInputsActionsCallbackInterface = instance;
             if (instance != null)
@@ -367,6 +392,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Aim.started += instance.OnAim;
                 @Aim.performed += instance.OnAim;
                 @Aim.canceled += instance.OnAim;
+                @ChangeFireMode.started += instance.OnChangeFireMode;
+                @ChangeFireMode.performed += instance.OnChangeFireMode;
+                @ChangeFireMode.canceled += instance.OnChangeFireMode;
             }
         }
     }
@@ -382,5 +410,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnMouseFire(InputAction.CallbackContext context);
         void OnReload(InputAction.CallbackContext context);
         void OnAim(InputAction.CallbackContext context);
+        void OnChangeFireMode(InputAction.CallbackContext context);
     }
 }

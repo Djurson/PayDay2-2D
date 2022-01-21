@@ -30,7 +30,7 @@ public class PlayerGunHandler : MonoBehaviour
 
     private void Update()
     {
-        playerInput.KeyboardInputs.Aim.started += Aim;
+        playerInput.KeyboardInputs.Aim.performed += Aim;
         playerInput.KeyboardInputs.Aim.canceled += StopAiming;
     }
 
