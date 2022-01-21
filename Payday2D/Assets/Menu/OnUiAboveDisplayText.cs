@@ -9,7 +9,6 @@ public class OnUiAboveDisplayText : MonoBehaviour, IPointerEnterHandler, IPointe
     [SerializeField] private TextMeshProUGUI M_DisplayText;
 
     public EventSystem eventSystem;
-
     public string DisplayText;
 
     public void OnPointerEnter(PointerEventData eventData)

@@ -54,9 +54,25 @@
                     "interactions": ""
                 },
                 {
-                    "name": "MouseScroll",
+                    "name": "MouseFire",
                     "type": "Button",
-                    "id": "6d81c2e3-50d1-427a-8b7b-5b3919877e2c",
+                    "id": "97e6dd22-385f-4c37-b75c-6d2ccafbc77e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Reload",
+                    "type": "Value",
+                    "id": "25dcac19-f29c-486a-b402-474758914196",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Aim",
+                    "type": "Value",
+                    "id": "f7c1cca1-f900-4c7b-97b9-d126fdfd0203",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -153,12 +169,34 @@
                 },
                 {
                     "name": "",
-                    "id": "40ad2156-5ab9-484a-a365-e59f86b86fd3",
-                    "path": "<Mouse>/scroll/y",
+                    "id": "9c7cf1a7-7174-4c23-9bc2-72737cd255e1",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MouseScroll",
+                    "action": "MouseFire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "42e454de-549f-4371-bda7-54e8e0eab882",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Reload",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9e2abb6c-3639-4fd5-9d5d-544981209592",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Aim",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

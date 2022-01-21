@@ -67,9 +67,25 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""MouseScroll"",
+                    ""name"": ""MouseFire"",
                     ""type"": ""Button"",
-                    ""id"": ""6d81c2e3-50d1-427a-8b7b-5b3919877e2c"",
+                    ""id"": ""97e6dd22-385f-4c37-b75c-6d2ccafbc77e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Reload"",
+                    ""type"": ""Value"",
+                    ""id"": ""25dcac19-f29c-486a-b402-474758914196"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Aim"",
+                    ""type"": ""Value"",
+                    ""id"": ""f7c1cca1-f900-4c7b-97b9-d126fdfd0203"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -166,12 +182,34 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""40ad2156-5ab9-484a-a365-e59f86b86fd3"",
-                    ""path"": ""<Mouse>/scroll/y"",
+                    ""id"": ""9c7cf1a7-7174-4c23-9bc2-72737cd255e1"",
+                    ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MouseScroll"",
+                    ""action"": ""MouseFire"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""42e454de-549f-4371-bda7-54e8e0eab882"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reload"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9e2abb6c-3639-4fd5-9d5d-544981209592"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Aim"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -188,7 +226,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_KeyboardInputs_MousePosition = m_KeyboardInputs.FindAction("MousePosition", throwIfNotFound: true);
         m_KeyboardInputs_Interact = m_KeyboardInputs.FindAction("Interact", throwIfNotFound: true);
         m_KeyboardInputs_ThrowBags = m_KeyboardInputs.FindAction("ThrowBags", throwIfNotFound: true);
-        m_KeyboardInputs_MouseScroll = m_KeyboardInputs.FindAction("MouseScroll", throwIfNotFound: true);
+        m_KeyboardInputs_MouseFire = m_KeyboardInputs.FindAction("MouseFire", throwIfNotFound: true);
+        m_KeyboardInputs_Reload = m_KeyboardInputs.FindAction("Reload", throwIfNotFound: true);
+        m_KeyboardInputs_Aim = m_KeyboardInputs.FindAction("Aim", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -244,7 +284,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_KeyboardInputs_MousePosition;
     private readonly InputAction m_KeyboardInputs_Interact;
     private readonly InputAction m_KeyboardInputs_ThrowBags;
-    private readonly InputAction m_KeyboardInputs_MouseScroll;
+    private readonly InputAction m_KeyboardInputs_MouseFire;
+    private readonly InputAction m_KeyboardInputs_Reload;
+    private readonly InputAction m_KeyboardInputs_Aim;
     public struct KeyboardInputsActions
     {
         private @PlayerControls m_Wrapper;
@@ -255,7 +297,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @MousePosition => m_Wrapper.m_KeyboardInputs_MousePosition;
         public InputAction @Interact => m_Wrapper.m_KeyboardInputs_Interact;
         public InputAction @ThrowBags => m_Wrapper.m_KeyboardInputs_ThrowBags;
-        public InputAction @MouseScroll => m_Wrapper.m_KeyboardInputs_MouseScroll;
+        public InputAction @MouseFire => m_Wrapper.m_KeyboardInputs_MouseFire;
+        public InputAction @Reload => m_Wrapper.m_KeyboardInputs_Reload;
+        public InputAction @Aim => m_Wrapper.m_KeyboardInputs_Aim;
         public InputActionMap Get() { return m_Wrapper.m_KeyboardInputs; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -283,9 +327,15 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @ThrowBags.started -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnThrowBags;
                 @ThrowBags.performed -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnThrowBags;
                 @ThrowBags.canceled -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnThrowBags;
-                @MouseScroll.started -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnMouseScroll;
-                @MouseScroll.performed -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnMouseScroll;
-                @MouseScroll.canceled -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnMouseScroll;
+                @MouseFire.started -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnMouseFire;
+                @MouseFire.performed -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnMouseFire;
+                @MouseFire.canceled -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnMouseFire;
+                @Reload.started -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnReload;
+                @Reload.performed -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnReload;
+                @Reload.canceled -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnReload;
+                @Aim.started -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnAim;
+                @Aim.performed -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnAim;
+                @Aim.canceled -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnAim;
             }
             m_Wrapper.m_KeyboardInputsActionsCallbackInterface = instance;
             if (instance != null)
@@ -308,9 +358,15 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @ThrowBags.started += instance.OnThrowBags;
                 @ThrowBags.performed += instance.OnThrowBags;
                 @ThrowBags.canceled += instance.OnThrowBags;
-                @MouseScroll.started += instance.OnMouseScroll;
-                @MouseScroll.performed += instance.OnMouseScroll;
-                @MouseScroll.canceled += instance.OnMouseScroll;
+                @MouseFire.started += instance.OnMouseFire;
+                @MouseFire.performed += instance.OnMouseFire;
+                @MouseFire.canceled += instance.OnMouseFire;
+                @Reload.started += instance.OnReload;
+                @Reload.performed += instance.OnReload;
+                @Reload.canceled += instance.OnReload;
+                @Aim.started += instance.OnAim;
+                @Aim.performed += instance.OnAim;
+                @Aim.canceled += instance.OnAim;
             }
         }
     }
@@ -323,6 +379,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnMousePosition(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
         void OnThrowBags(InputAction.CallbackContext context);
-        void OnMouseScroll(InputAction.CallbackContext context);
+        void OnMouseFire(InputAction.CallbackContext context);
+        void OnReload(InputAction.CallbackContext context);
+        void OnAim(InputAction.CallbackContext context);
     }
 }

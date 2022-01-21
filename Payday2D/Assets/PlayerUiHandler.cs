@@ -12,7 +12,10 @@ public class PlayerUiHandler : MonoBehaviour
 
     private void Start()
     {
-        user = GameHandler.instance.user;
-        UsernameText.text = $"{user.DisplayName}";
+        if(GameHandler.instance.user != null)
+        {
+            user = GameHandler.instance.user;
+            UsernameText.text = $"{user.DisplayName}";
+        }
     }
 }

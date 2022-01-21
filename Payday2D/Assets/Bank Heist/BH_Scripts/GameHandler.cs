@@ -25,12 +25,19 @@ public class GameHandler : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        auth = BankHeistSetup.instance.auth;
+
+        if(BankHeistSetup.instance != null)
+        {
+            auth = BankHeistSetup.instance.auth;
+        }
     }
 
     private void Start()
     {
-        user = auth.CurrentUser;
+        if(auth != null)
+        {
+            user = auth.CurrentUser;
+        }
         //TODO: Get if the player has purchased any assets
     }
 }
