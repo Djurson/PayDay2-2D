@@ -1040,6 +1040,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RootTransform: {fileID: 3392666761764578098}
+  Player: {fileID: 851815780642041616}
   localFireMode: 1
   PrimaryRecoilNotAiming: {x: -7, y: 7}
   PrimaryRecoilAiming: {x: -2, y: 2}
@@ -1047,8 +1048,8 @@ MonoBehaviour:
   primaryMagAmmo: 30
   primaryMaxMagAmmo: 30
   isReloading: 0
-  BulletPrefab: {fileID: 0}
-  BulletStart: {fileID: 0}
+  BulletPrefab: {fileID: 6748660717229420798, guid: c10d884ba22980044bc08784263a49e9, type: 3}
+  BulletStart: {fileID: 7095999546201731109}
   AdsPosition: {x: 0.2, y: 1.45}
   NormalPosition: {x: 0.45, y: 1.35}
   PrimaryFireRate: 30

@@ -12,6 +12,7 @@ public class PrimaryShootingHandler : MonoBehaviour
 {
     [Header("Transforms")]
     [SerializeField] private Transform RootTransform;
+    [SerializeField] private Transform Player;
     [Space(5)]
 
     [Header("Enums")]
@@ -112,7 +113,7 @@ public class PrimaryShootingHandler : MonoBehaviour
                 RootTransform.localRotation = Quaternion.Euler(0, 0, Random.Range(PrimaryRecoilNotAiming.x, PrimaryRecoilNotAiming.y));
                 primaryMagAmmo -= 1;
                 var instatiatedBullet = Instantiate(BulletPrefab, BulletStart.position, Quaternion.identity);
-                instatiatedBullet.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 1);
+                instatiatedBullet.gameObject.GetComponent<Rigidbody2D>().velocity = Player.transform.up * 20;
             }
         }
 
@@ -124,7 +125,7 @@ public class PrimaryShootingHandler : MonoBehaviour
                 RootTransform.localRotation = Quaternion.Euler(0, 0, Random.Range(PrimaryRecoilAiming.x, PrimaryRecoilAiming.y));
                 primaryMagAmmo -= 1;
                 var instatiatedBullet = Instantiate(BulletPrefab, BulletStart.position, Quaternion.identity);
-                instatiatedBullet.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 1);
+                instatiatedBullet.gameObject.GetComponent<Rigidbody2D>().velocity = Player.transform.up * 20;
             }
         }
     }
@@ -141,7 +142,7 @@ public class PrimaryShootingHandler : MonoBehaviour
                 RootTransform.localRotation = Quaternion.Euler(0, 0, Random.Range(PrimaryRecoilAiming.x, PrimaryRecoilAiming.y));
                 primaryMagAmmo -= 1;
                 var instatiatedBullet = Instantiate(BulletPrefab, BulletStart.position, Quaternion.identity);
-                instatiatedBullet.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 1);
+                instatiatedBullet.gameObject.GetComponent<Rigidbody2D>().velocity = Player.transform.up * 20;
             }
         }
 
@@ -153,7 +154,7 @@ public class PrimaryShootingHandler : MonoBehaviour
                 RootTransform.localRotation = Quaternion.Euler(0, 0, Random.Range(PrimaryRecoilAiming.x, PrimaryRecoilAiming.y));
                 primaryMagAmmo -= 1;
                 var instatiatedBullet = Instantiate(BulletPrefab, BulletStart.position, Quaternion.identity);
-                instatiatedBullet.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 1);
+                instatiatedBullet.gameObject.GetComponent<Rigidbody2D>().velocity = Player.transform.up * 20;
             }
         }
     }
