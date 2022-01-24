@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 7956989070637424602}
   - component: {fileID: 6395776868687588931}
   - component: {fileID: 721535046963417929}
+  - component: {fileID: 3080784909270792628}
+  - component: {fileID: 6370908280449207032}
   m_Layer: 0
   m_Name: M855Prefab
   m_TagString: Untagged
@@ -71,7 +73,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5000
   m_Sprite: {fileID: 21300000, guid: 5b72acf21a630134cace0695a58da4dd, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -104,3 +106,43 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!61 &3080784909270792628
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6748660717229420798}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.22, y: 0.64}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.22, y: 0.64}
+  m_EdgeRadius: 0
+--- !u!114 &6370908280449207032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6748660717229420798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d294d270635e8041b4775fdc58f4d1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  WoodBulletImpact: {fileID: 5655253021172412597, guid: 3b830c0b987d48343bd24e6a163172f6, type: 3}
+  BloodParticleEffect: {fileID: 4653054605663688503, guid: 2240ffc757b608540928bf38be88b110, type: 3}

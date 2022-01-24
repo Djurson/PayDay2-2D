@@ -97,6 +97,30 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""SwitchPrimaryWeapon"",
+                    ""type"": ""Button"",
+                    ""id"": ""cf694e08-6092-4d7e-be93-37b0a266d218"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""SwitchSecondary"",
+                    ""type"": ""Button"",
+                    ""id"": ""f8dc5c65-731f-45ee-8d25-35994a51e993"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""MouseSwitchWeapon"",
+                    ""type"": ""Value"",
+                    ""id"": ""2d6a053f-5d02-4aea-9073-1d9d034221c7"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -231,6 +255,39 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""ChangeFireMode"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f0922670-f1ec-4feb-b69e-994fac33398d"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchPrimaryWeapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fd371244-563c-4bdb-ae42-197a3f61df9b"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchSecondary"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""933275b9-7d32-4cbc-800e-e9d2eb3a45cd"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseSwitchWeapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -249,6 +306,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_KeyboardInputs_Reload = m_KeyboardInputs.FindAction("Reload", throwIfNotFound: true);
         m_KeyboardInputs_Aim = m_KeyboardInputs.FindAction("Aim", throwIfNotFound: true);
         m_KeyboardInputs_ChangeFireMode = m_KeyboardInputs.FindAction("ChangeFireMode", throwIfNotFound: true);
+        m_KeyboardInputs_SwitchPrimaryWeapon = m_KeyboardInputs.FindAction("SwitchPrimaryWeapon", throwIfNotFound: true);
+        m_KeyboardInputs_SwitchSecondary = m_KeyboardInputs.FindAction("SwitchSecondary", throwIfNotFound: true);
+        m_KeyboardInputs_MouseSwitchWeapon = m_KeyboardInputs.FindAction("MouseSwitchWeapon", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -308,6 +368,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_KeyboardInputs_Reload;
     private readonly InputAction m_KeyboardInputs_Aim;
     private readonly InputAction m_KeyboardInputs_ChangeFireMode;
+    private readonly InputAction m_KeyboardInputs_SwitchPrimaryWeapon;
+    private readonly InputAction m_KeyboardInputs_SwitchSecondary;
+    private readonly InputAction m_KeyboardInputs_MouseSwitchWeapon;
     public struct KeyboardInputsActions
     {
         private @PlayerControls m_Wrapper;
@@ -322,6 +385,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @Reload => m_Wrapper.m_KeyboardInputs_Reload;
         public InputAction @Aim => m_Wrapper.m_KeyboardInputs_Aim;
         public InputAction @ChangeFireMode => m_Wrapper.m_KeyboardInputs_ChangeFireMode;
+        public InputAction @SwitchPrimaryWeapon => m_Wrapper.m_KeyboardInputs_SwitchPrimaryWeapon;
+        public InputAction @SwitchSecondary => m_Wrapper.m_KeyboardInputs_SwitchSecondary;
+        public InputAction @MouseSwitchWeapon => m_Wrapper.m_KeyboardInputs_MouseSwitchWeapon;
         public InputActionMap Get() { return m_Wrapper.m_KeyboardInputs; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -361,6 +427,15 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @ChangeFireMode.started -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnChangeFireMode;
                 @ChangeFireMode.performed -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnChangeFireMode;
                 @ChangeFireMode.canceled -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnChangeFireMode;
+                @SwitchPrimaryWeapon.started -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnSwitchPrimaryWeapon;
+                @SwitchPrimaryWeapon.performed -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnSwitchPrimaryWeapon;
+                @SwitchPrimaryWeapon.canceled -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnSwitchPrimaryWeapon;
+                @SwitchSecondary.started -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnSwitchSecondary;
+                @SwitchSecondary.performed -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnSwitchSecondary;
+                @SwitchSecondary.canceled -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnSwitchSecondary;
+                @MouseSwitchWeapon.started -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnMouseSwitchWeapon;
+                @MouseSwitchWeapon.performed -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnMouseSwitchWeapon;
+                @MouseSwitchWeapon.canceled -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnMouseSwitchWeapon;
             }
             m_Wrapper.m_KeyboardInputsActionsCallbackInterface = instance;
             if (instance != null)
@@ -395,6 +470,15 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @ChangeFireMode.started += instance.OnChangeFireMode;
                 @ChangeFireMode.performed += instance.OnChangeFireMode;
                 @ChangeFireMode.canceled += instance.OnChangeFireMode;
+                @SwitchPrimaryWeapon.started += instance.OnSwitchPrimaryWeapon;
+                @SwitchPrimaryWeapon.performed += instance.OnSwitchPrimaryWeapon;
+                @SwitchPrimaryWeapon.canceled += instance.OnSwitchPrimaryWeapon;
+                @SwitchSecondary.started += instance.OnSwitchSecondary;
+                @SwitchSecondary.performed += instance.OnSwitchSecondary;
+                @SwitchSecondary.canceled += instance.OnSwitchSecondary;
+                @MouseSwitchWeapon.started += instance.OnMouseSwitchWeapon;
+                @MouseSwitchWeapon.performed += instance.OnMouseSwitchWeapon;
+                @MouseSwitchWeapon.canceled += instance.OnMouseSwitchWeapon;
             }
         }
     }
@@ -411,5 +495,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnReload(InputAction.CallbackContext context);
         void OnAim(InputAction.CallbackContext context);
         void OnChangeFireMode(InputAction.CallbackContext context);
+        void OnSwitchPrimaryWeapon(InputAction.CallbackContext context);
+        void OnSwitchSecondary(InputAction.CallbackContext context);
+        void OnMouseSwitchWeapon(InputAction.CallbackContext context);
     }
 }

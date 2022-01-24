@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using TMPro;
 
 public enum playerCarryingState
@@ -39,6 +40,7 @@ public class playerInteraction : MonoBehaviour
     [Header("UI")]
     public Image interactionProgress;
     public TextMeshProUGUI playerInfoText;
+    string interactionTextBinding;
 
     [Header("Scripts")]
     private PlayerMovement _playerMovement;
@@ -80,7 +82,7 @@ public class playerInteraction : MonoBehaviour
                 {
                     interactionMax = localDoorHandler.interactionTime;
                     playerInfoText.enabled = true;
-                    playerInfoText.text = "Hold [E] To Lock Pick";
+                    playerInfoText.text = $"Hold [{interactionTextBinding.ToUpper()}] To Lock Pick";
                 }
             }
 
@@ -91,7 +93,7 @@ public class playerInteraction : MonoBehaviour
                     playerInfoText.enabled = true;
                     closeByInteractebleObject = hit.collider.gameObject;
                     interactionMax = hit.collider.gameObject.GetComponent<Bag>().interactionTime;
-                    playerInfoText.text = "Hold [E] To Grab";
+                    playerInfoText.text = $"Hold [{interactionTextBinding.ToUpper()}] To Grab";
                 }
 
                 if (hit.collider.CompareTag("ThermalDrill"))
@@ -103,7 +105,7 @@ public class playerInteraction : MonoBehaviour
                             playerInfoText.enabled = true;
                             closeByInteractebleObject = hit.collider.gameObject;
                             interactionMax = hit.collider.gameObject.GetComponent<DrillInteraction>().interactionTime;
-                            playerInfoText.text = "Hold [E] To Setup Drill";
+                            playerInfoText.text = $"Hold [{interactionTextBinding.ToUpper()}] To Setup Drill";
                         }
 
                         if (hit.collider.GetComponent<DrillInteraction>().drillState == DrillState.Failure)
@@ -111,9 +113,17 @@ public class playerInteraction : MonoBehaviour
                             playerInfoText.enabled = true;
                             closeByInteractebleObject = hit.collider.gameObject;
                             interactionMax = hit.collider.gameObject.GetComponent<DrillInteraction>().interactionTime;
-                            playerInfoText.text = "Hold [E] To Fix Drill";
+                            playerInfoText.text = $"Hold [{interactionTextBinding.ToUpper()}] To Fix Drill";
                         }
                     }
+                }
+
+                if (hit.collider.CompareTag("DeadCivilian"))
+                {
+                    playerInfoText.enabled = true;
+                    closeByInteractebleObject = hit.collider.gameObject;
+                    interactionMax = hit.collider.gameObject.GetComponent<localCivilianHandler>().interactionTime;
+                    playerInfoText.text = $"Hold [{interactionTextBinding.ToUpper()}] To Body Bag The Dead Body";
                 }
             }
         }
@@ -234,6 +244,9 @@ public class playerInteraction : MonoBehaviour
 
     private void Update()
     {
+        string interactionBinding = playerControls.KeyboardInputs.Interact.GetBindingDisplayString();
+        interactionTextBinding = interactionBinding.ToLower().Replace("press ", "");
+
         updateInteraction();
         playerInput();
 
@@ -242,9 +255,8 @@ public class playerInteraction : MonoBehaviour
             checkDoorInteraction();
             checkBagInteraction();
             checkDrillInteraction();
+            rayCast();
         }
-
-        rayCast();
 
         if(closeByInteractebleObject == null)
         {

@@ -19,6 +19,9 @@ TagManager:
   - AiTargets
   - AiSpawnPoint
   - DrillSpawnLocation
+  - Wood
+  - BulletImpactWood
+  - DeadCivilian
   layers:
   - Default
   - TransparentFX
@@ -31,7 +34,7 @@ TagManager:
   - Bag
   - Civilian
   - GoldBars
-  - 
+  - BulletImpact
   - 
   - 
   - 

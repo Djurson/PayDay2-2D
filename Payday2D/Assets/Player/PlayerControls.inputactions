@@ -84,6 +84,30 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "SwitchPrimaryWeapon",
+                    "type": "Button",
+                    "id": "cf694e08-6092-4d7e-be93-37b0a266d218",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "SwitchSecondary",
+                    "type": "Button",
+                    "id": "f8dc5c65-731f-45ee-8d25-35994a51e993",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "MouseSwitchWeapon",
+                    "type": "Value",
+                    "id": "2d6a053f-5d02-4aea-9073-1d9d034221c7",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -216,6 +240,39 @@
                     "processors": "",
                     "groups": "",
                     "action": "ChangeFireMode",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f0922670-f1ec-4feb-b69e-994fac33398d",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SwitchPrimaryWeapon",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fd371244-563c-4bdb-ae42-197a3f61df9b",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SwitchSecondary",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "933275b9-7d32-4cbc-800e-e9d2eb3a45cd",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseSwitchWeapon",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

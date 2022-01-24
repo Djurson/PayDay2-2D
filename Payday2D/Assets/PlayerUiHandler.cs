@@ -22,7 +22,9 @@ public class PlayerUiHandler : MonoBehaviour
     [SerializeField] private TMP_Text SecondaryAmmoText;
 
     [Header("Script Refrences")]
-    [SerializeField] private PrimaryShootingHandler PrimaryWeapon;
+    [SerializeField] private PlayerGunHandler gunHandler;
+    [SerializeField] private WeaponShootingHandler PrimaryWeapon;
+    [SerializeField] private WeaponShootingHandler SecondaryWeapon;
 
     private void Start()
     {
@@ -35,14 +37,37 @@ public class PlayerUiHandler : MonoBehaviour
 
     private void Update()
     {
-        if(PrimaryWeapon.localFireMode == WeaponFireMode.Auto)
+        if(gunHandler.gunState == playerGunsState.Primary)
         {
-            PrimaryFireModeImage.sprite = AutomaticIcon;
-        } else if(PrimaryWeapon.localFireMode == WeaponFireMode.Semi)
-        {
-            PrimaryFireModeImage.sprite = SemiAutomaticIcon;
+            PrimaryFireModeImage.color = Color.Lerp(SecondaryFireModeImage.color, new Color(255f, 255f, 255f, 255f), Time.deltaTime);
+            SecondaryFireModeImage.color = Color.Lerp(SecondaryFireModeImage.color, new Color(255f, 255f, 255f, 125f), Time.deltaTime);
+
+            if (PrimaryWeapon.localFireMode == WeaponFireMode.Auto)
+            {
+                PrimaryFireModeImage.sprite = AutomaticIcon;
+            }
+            else if (PrimaryWeapon.localFireMode == WeaponFireMode.Semi)
+            {
+                PrimaryFireModeImage.sprite = SemiAutomaticIcon;
+            }
         }
 
-        PrimaryAmmoText.text = $"{PrimaryWeapon.primaryMagAmmo}/{PrimaryWeapon.primaryTotalAmmo}";
+        if (gunHandler.gunState == playerGunsState.Secondary)
+        {
+            SecondaryFireModeImage.color = Color.Lerp(SecondaryFireModeImage.color, new Color(255f, 255f, 255f, 255f), Time.deltaTime);
+            PrimaryFireModeImage.color = Color.Lerp(PrimaryFireModeImage.color, new Color(255f, 255f, 255f, 125f), Time.deltaTime);
+
+            if (SecondaryWeapon.localFireMode == WeaponFireMode.Auto)
+            {
+                SecondaryFireModeImage.sprite = AutomaticIcon;
+            }
+            else if (SecondaryWeapon.localFireMode == WeaponFireMode.Semi)
+            {
+                SecondaryFireModeImage.sprite = SemiAutomaticIcon;
+            }
+        }
+
+        SecondaryAmmoText.text = $"{SecondaryWeapon.MagAmmo}/{SecondaryWeapon.TotalAmmo}";
+        PrimaryAmmoText.text = $"{PrimaryWeapon.MagAmmo}/{PrimaryWeapon.TotalAmmo}";
     }
 }

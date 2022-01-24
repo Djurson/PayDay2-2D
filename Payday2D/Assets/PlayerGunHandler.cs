@@ -22,6 +22,10 @@ public class PlayerGunHandler : MonoBehaviour
 
     private PlayerControls playerInput;
 
+    [Header("Gun Refrences")]
+    [SerializeField] private GameObject PrimaryWeapon;
+    [SerializeField] private GameObject SecondaryWeapon;
+
     private void Awake()
     {
         playerInput = new PlayerControls();
@@ -32,13 +36,15 @@ public class PlayerGunHandler : MonoBehaviour
     {
         playerInput.KeyboardInputs.Aim.performed += Aim;
         playerInput.KeyboardInputs.Aim.canceled += StopAiming;
+        playerInput.KeyboardInputs.SwitchPrimaryWeapon.performed += SwitchToPrimary;
+        playerInput.KeyboardInputs.SwitchSecondary.performed += SwitchToSecondary;
+        playerInput.KeyboardInputs.MouseSwitchWeapon.performed += SwitchWeapon;
     }
 
     private void Aim(InputAction.CallbackContext ctx)
     {
         if(aimState != playerAimState.Aiming)
         {
-            Debug.Log(ctx.ReadValue<float>());
             aimState = playerAimState.Aiming;
         }
     }
@@ -47,8 +53,38 @@ public class PlayerGunHandler : MonoBehaviour
     {
         if(aimState != playerAimState.NotAiming)
         {
-            Debug.Log(ctx.ReadValue<float>());
             aimState = playerAimState.NotAiming;
+        }
+    }
+
+    private void SwitchToPrimary(InputAction.CallbackContext ctx)
+    {
+        SecondaryWeapon.SetActive(false);
+        PrimaryWeapon.SetActive(true);
+        gunState = playerGunsState.Primary;
+    }
+
+    private void SwitchToSecondary(InputAction.CallbackContext ctx)
+    {
+        PrimaryWeapon.SetActive(false);
+        SecondaryWeapon.SetActive(true);
+        gunState = playerGunsState.Secondary;
+    }
+
+    private void SwitchWeapon(InputAction.CallbackContext ctx)
+    {
+        if(gunState == playerGunsState.Primary)
+        {
+            PrimaryWeapon.SetActive(false);
+            SecondaryWeapon.SetActive(true);
+            gunState = playerGunsState.Secondary;
+        }
+
+        if (gunState == playerGunsState.Secondary)
+        {
+            SecondaryWeapon.SetActive(false);
+            PrimaryWeapon.SetActive(true);
+            gunState = playerGunsState.Primary;
         }
     }
 }
