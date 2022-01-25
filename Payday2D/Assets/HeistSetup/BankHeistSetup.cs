@@ -1,5 +1,4 @@
 using UnityEngine;
-using Firebase.Auth;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -37,10 +36,6 @@ public class BankHeistSetup : MonoBehaviour
     public thermalDrillPosition drillPosition;
     public bodyBagsPosition bodyPosition;
     [Space(5)]
-
-    [Header("Firebase")]
-    public FirebaseUser user;
-    public FirebaseAuth auth;
 
     [Header("Text")]
     [SerializeField] private string textBeforeUserName;
@@ -93,15 +88,13 @@ public class BankHeistSetup : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        auth = LobbyManager.instance.auth;
     }
 
     private void Start()
     {
-        user = auth.CurrentUser;
-        if (user != null)
+        if (FirebaseManager.instance.user != null)
         {
-            user1DisplayText.text = $"<color=#FF855F>{textBeforeUserName}</color=#FF855F>           <color=#ffffff>{user.DisplayName}           {playerStateString}</color=#ffffff>";
+            user1DisplayText.text = $"<color=#FF855F>{textBeforeUserName}</color=#FF855F>           <color=#ffffff>{FirebaseManager.instance.user.DisplayName}           {playerStateString}</color=#ffffff>";
         }
         else
         {
@@ -123,11 +116,11 @@ public class BankHeistSetup : MonoBehaviour
         {
             if (playerState != playerReadyState.Ready)
             {
-                user1DisplayText.text = $"<color=#FF855F>{textBeforeUserName}</color=#FF855F>           <color=#ffffff>{user.DisplayName}           {playerStateString}</color=#ffffff>";
+                user1DisplayText.text = $"<color=#FF855F>{textBeforeUserName}</color=#FF855F>           <color=#ffffff>{FirebaseManager.instance.user.DisplayName}           {playerStateString}</color=#ffffff>";
             }
             else
             {
-                user1DisplayText.text = $"<color=#FF855F>{textBeforeUserName}</color=#FF855F>           <color=#ffffff>{user.DisplayName}           {playerState}</color=#ffffff>";
+                user1DisplayText.text = $"<color=#FF855F>{textBeforeUserName}</color=#FF855F>           <color=#ffffff>{FirebaseManager.instance.user.DisplayName}           {playerState}</color=#ffffff>";
             }
         }
     }

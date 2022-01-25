@@ -18,27 +18,11 @@ public class DropOffHandler : MonoBehaviour
     private float leaveFloat;
 
     private GameObject player;
-    private GameObject fadeOutEffect;
-
-    private Color ImageColor;
-
-    private void Awake()
-    {
-        DontDestroyOnLoad(this);
-        if(instance == null)
-        {
-            instance = this;
-        } else if(instance != this)
-        {
-            Destroy(instance);
-            instance = this;
-        }
-    }
+    public GameObject fadeOutEffect;
+    private bool loadNextScenelevel = false;
 
     private void Update()
     {
-        if(fadeOutEffect == null) { fadeOutEffect = GameObject.FindWithTag("FadeOutEffect"); }
-
         if(leave == true)
         {
             leaveFloat = Mathf.MoveTowards(leaveFloat, 2f, Time.deltaTime);
@@ -50,16 +34,14 @@ public class DropOffHandler : MonoBehaviour
                 Destroy(VanDropOffOutline);
             if(boxTrigger != null)
                 Destroy(boxTrigger);
-            var color = fadeOutEffect.GetComponent<Image>().color;
-            color.a = Mathf.MoveTowards(color.a, 255f, Time.deltaTime);
-            fadeOutEffect.GetComponent<Image>().color = color;
-            ImageColor = color;
-            VanTransform.position = Vector2.MoveTowards(VanTransform.position, new Vector2(54, VanTransform.position.y), Time.deltaTime);
-        }
-
-        if(ImageColor.a == 255f)
-        {
-            SceneManager.LoadSceneAsync(4);
+            if(loadNextScenelevel == false)
+            {
+                fadeOutEffect.SetActive(true);
+                PlaytimeHandler.instance.StopCounting();
+                GameManager.instance.PlayTimeInHeistsSeconds += PlaytimeHandler.instance.playtime;
+                StartCoroutine("waitForOneSecond");
+                loadNextScenelevel = true;
+            }
         }
     }
 
@@ -68,15 +50,19 @@ public class DropOffHandler : MonoBehaviour
         if (collision.gameObject.CompareTag("GoldBars"))
         {
             GoldBarsCollected += 1;
-            GameHandler.instance.CollectedLootValue += 61500;
-            GameHandler.instance.XpEarned += 1150;
-            GameHandler.instance.BagsCollected += 1;
+            GameManager.instance.CollectedLootValue += 61500;
+            GameManager.instance.XpEarned += 1150;
+            GameManager.instance.BagsCollected += 1;
             Destroy(collision.gameObject);
         }
 
         if(collision.gameObject.CompareTag("Player") && GoldBarsCollected >= GoldBarsLimit)
         {
             player = collision.gameObject;
+            if (fadeOutEffect == null)
+            {
+                fadeOutEffect = player.GetComponent<CameraFollowPlayer>().cameraFade;
+            }
             leave = true;
         }
     }
@@ -87,5 +73,18 @@ public class DropOffHandler : MonoBehaviour
         {
             leave = false;
         }
+    }
+
+    private void nextSceneLevel()
+    {
+        SceneManager.LoadSceneAsync(4);
+        LevelHandler.instance.check = true;
+    }
+
+    private IEnumerator waitForOneSecond()
+    {
+        yield return new WaitForSeconds(1);
+        nextSceneLevel();
+        StopCoroutine("waitForOneSecond");
     }
 }

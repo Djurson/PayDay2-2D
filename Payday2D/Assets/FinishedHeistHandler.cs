@@ -1,11 +1,11 @@
 using System;
 using System.Globalization;
 using System.Collections;
-using Firebase.Auth;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class FinishedHeistHandler : MonoBehaviour
 {
@@ -27,6 +27,7 @@ public class FinishedHeistHandler : MonoBehaviour
     public int OffshoreAccountMoneyInt;
     public int SpendableCashMoneyInt;
     public int TotalMoneyEarned;
+    public int MoneyTakenForKillingCivilians;
 
     [Header("Stats Menu")]
     [SerializeField] private float BagsCollectedFloat;
@@ -46,10 +47,14 @@ public class FinishedHeistHandler : MonoBehaviour
     [SerializeField] private string SpendableCashString;
     [SerializeField] private float OffshoreAccountMoney;
     [SerializeField] private string OffshoreAccountMoneyString;
+    [SerializeField] private float CivilianKilledMoney;
+    [SerializeField] private string CivilianKilledMoneyString;
     [SerializeField] private TMP_Text HeistBasePayoutText;
     [SerializeField] private TMP_Text BagsValueText;
     [SerializeField] private TMP_Text SpendableCashText;
     [SerializeField] private TMP_Text OffshoreAccountText;
+    [SerializeField] private TMP_Text CivilianKilledMoneyText;
+    [SerializeField] private bool updateSpendableCash = false;
 
     [Header("Xp Menu")]
     [SerializeField] private float CurrentXpFloat;
@@ -62,7 +67,9 @@ public class FinishedHeistHandler : MonoBehaviour
     [SerializeField] private TMP_Text TotalBagsXPText;
     [SerializeField] private TMP_Text EarnedXpText;
     [SerializeField] private bool updateBaseXp = true;
-    [SerializeField] private bool updateXp = true;
+    [SerializeField] private bool readyToLoadBackToMenu = false;
+    public Image ExperienceCircle;
+    public TMP_Text LevelText;
 
     [Header("Menus")]
     [SerializeField] private GameObject StatsMenu;
@@ -70,14 +77,10 @@ public class FinishedHeistHandler : MonoBehaviour
     [SerializeField] private GameObject XpMenu;
     [Space(5)]
     [SerializeField] private GameObject PressAnyKeyToContinue;
-
-    [Header("Firebase")]
-    public FirebaseUser user;
-    public FirebaseAuth auth;
+    private bool doOnceLevelSystem = false;
 
     private void Awake()
     {
-        DontDestroyOnLoad(this);
         if(instance == null)
         {
             instance = this;
@@ -87,15 +90,24 @@ public class FinishedHeistHandler : MonoBehaviour
             instance = this;
         }
 
-        if(GameHandler.instance != null)
+        if(GameManager.instance != null)
         {
-            user = GameHandler.instance.user;
-            auth = GameHandler.instance.auth;
-            BagsCollected = GameHandler.instance.BagsCollected;
-            XpEarned = GameHandler.instance.XpEarned;
-            TotalBagsValue = GameHandler.instance.CollectedLootValue;
-            CiviliansKilled = GameHandler.instance.CiviliansKilled;
-            GuardsKilled = GameHandler.instance.GuardsKilled;
+            BagsCollected = GameManager.instance.BagsCollected;
+            GameManager.instance.BagsCollected = 0;
+            XpEarned = GameManager.instance.XpEarned;
+            GameManager.instance.XpEarned = 0;
+            TotalBagsValue = GameManager.instance.CollectedLootValue;
+            GameManager.instance.CollectedLootValue = 0;
+            CiviliansKilled = GameManager.instance.CiviliansKilled;
+            GameManager.instance.CiviliansKilled = 0;
+            GuardsKilled = GameManager.instance.GuardsKilled;
+            GameManager.instance.GuardsKilled = 0;
+            HeistBasePayout = GameManager.instance.HeistBasePayout;
+            GameManager.instance.HeistBasePayout = 0;
+            HeistBaseXp = GameManager.instance.HeistBaseXp;
+            GameManager.instance.HeistBaseXp = 0;
+            MoneyTakenForKillingCivilians = GameManager.instance.MoneyTakenForKillingCivilians;
+            GameManager.instance.MoneyTakenForKillingCivilians = 0;
         }
     }
 
@@ -117,6 +129,7 @@ public class FinishedHeistHandler : MonoBehaviour
         EarnedXpText.gameObject.SetActive(false);
         HeistBaseXpText.gameObject.SetActive(false);
         TotalBagsXPText.gameObject.SetActive(false);
+        CivilianKilledMoneyText.gameObject.SetActive(false);
     }
 
     private void Start()
@@ -140,6 +153,8 @@ public class FinishedHeistHandler : MonoBehaviour
             UpdateBaseHeistXpText();
         if (XpMenu.activeInHierarchy && updateBaseXp == false)
             UpdateTotalBagsXpText();
+        if (readyToLoadBackToMenu)
+            LookForInput();
 
         if (nextMenu)
         {
@@ -223,7 +238,7 @@ public class FinishedHeistHandler : MonoBehaviour
     private void UpdateBankHeistBasePayoutText()
     {
         HeistBasePayoutText.gameObject.SetActive(true);
-        HeistBasePayoutFloat = Mathf.MoveTowards(HeistBasePayoutFloat, HeistBasePayout, HeistBasePayout / 5 * Time.deltaTime);
+        HeistBasePayoutFloat = Mathf.MoveTowards(HeistBasePayoutFloat, HeistBasePayout, (float) HeistBasePayout / 5 * Time.deltaTime);
         NumberFormatInfo NFI = new CultureInfo("en-US", false).NumberFormat;
         NFI.CurrencyGroupSeparator = ".";
         NFI.CurrencySymbol = "";
@@ -239,7 +254,7 @@ public class FinishedHeistHandler : MonoBehaviour
     private void UpdateTotalBagsValueText()
     {
         BagsValueText.gameObject.SetActive(true);
-        TotalBagsValueFloat = Mathf.MoveTowards(TotalBagsValueFloat, TotalBagsValue, TotalBagsValue / 5 * Time.deltaTime);
+        TotalBagsValueFloat = Mathf.MoveTowards(TotalBagsValueFloat, TotalBagsValue, (float) TotalBagsValue / 5 * Time.deltaTime);
         NumberFormatInfo NFI = new CultureInfo("en-US", false).NumberFormat;
         NFI.CurrencyGroupSeparator = ".";
         NFI.CurrencySymbol = "";
@@ -254,31 +269,65 @@ public class FinishedHeistHandler : MonoBehaviour
 
     private void UpdateSpendableCashText()
     {
-        SpendableCashText.gameObject.SetActive(true);
-        SpendableCash = Mathf.MoveTowards(SpendableCash, SpendableCashMoneyInt, SpendableCashMoneyInt / 5 * Time.deltaTime);
-        NumberFormatInfo NFI = new CultureInfo("en-US", false).NumberFormat;
-        NFI.CurrencyGroupSeparator = ".";
-        NFI.CurrencySymbol = "";
-        SpendableCashString = Convert.ToDecimal(SpendableCash).ToString("C0", NFI);
-        SpendableCashText.text = $"Spendable Cash: ${SpendableCashString}";
-
-        if(SpendableCash == SpendableCashMoneyInt)
+        if(updateSpendableCash == false)
         {
-            UpdateOffshoreAccountText();
+            SpendableCashText.gameObject.SetActive(true);
+            SpendableCash = Mathf.MoveTowards(SpendableCash, SpendableCashMoneyInt, (float)SpendableCashMoneyInt / 5 * Time.deltaTime);
+            NumberFormatInfo NFI = new CultureInfo("en-US", false).NumberFormat;
+            NFI.CurrencyGroupSeparator = ".";
+            NFI.CurrencySymbol = "";
+            SpendableCashString = Convert.ToDecimal(SpendableCash).ToString("C0", NFI);
+            SpendableCashText.text = $"Spendable Cash: ${SpendableCashString}";
+
+            if (SpendableCash >= SpendableCashMoneyInt - 1)
+            {
+                UpdateOffshoreAccountText();
+            }
+        }
+        else
+        {
+            UpdateCivilianKilledText();
         }
     }
 
     private void UpdateOffshoreAccountText()
     {
         OffshoreAccountText.gameObject.SetActive(true);
-        OffshoreAccountMoney = Mathf.MoveTowards(OffshoreAccountMoney, OffshoreAccountMoneyInt, OffshoreAccountMoneyInt / 5 * Time.deltaTime);
+        OffshoreAccountMoney = Mathf.MoveTowards(OffshoreAccountMoney, OffshoreAccountMoneyInt, (float) OffshoreAccountMoneyInt / 5 * Time.deltaTime);
         NumberFormatInfo NFI = new CultureInfo("en-US", false).NumberFormat;
         NFI.CurrencyGroupSeparator = ".";
         NFI.CurrencySymbol = "";
         OffshoreAccountMoneyString = Convert.ToDecimal(OffshoreAccountMoney).ToString("C0", NFI);
         OffshoreAccountText.text = $"Money Sent To Offshore Account: ${OffshoreAccountMoneyString}";
 
-        if (OffshoreAccountMoney == OffshoreAccountMoneyInt)
+        if (OffshoreAccountMoney >= OffshoreAccountMoneyInt - 1)
+        {
+            UpdateCivilianKilledText();
+        }
+    }
+
+    private void UpdateCivilianKilledText()
+    {
+        if(updateSpendableCash == false)
+        {
+            SpendableCashMoneyInt = SpendableCashMoneyInt - MoneyTakenForKillingCivilians;
+            updateSpendableCash = true;
+        }
+
+        CivilianKilledMoneyText.gameObject.SetActive(true);
+        CivilianKilledMoney = Mathf.MoveTowards(CivilianKilledMoney, MoneyTakenForKillingCivilians, (float)MoneyTakenForKillingCivilians / 5 * Time.deltaTime);
+        NumberFormatInfo NFI = new CultureInfo("en-US", false).NumberFormat;
+        NFI.CurrencyGroupSeparator = ".";
+        NFI.CurrencySymbol = "";
+        CivilianKilledMoneyString = Convert.ToDecimal(CivilianKilledMoney).ToString("C0", NFI);
+        CivilianKilledMoneyText.text = $"Money Taken For Killing Civilians: <color=#FF5656> $-{CivilianKilledMoneyString} </color=#FF5656>";
+
+        SpendableCashText.gameObject.SetActive(true);
+        SpendableCash = Mathf.MoveTowards(SpendableCash, SpendableCashMoneyInt, (float) SpendableCashMoneyInt / 5 * Time.deltaTime);
+        SpendableCashString = Convert.ToDecimal(SpendableCash).ToString("C0", NFI);
+        SpendableCashText.text = $"Spendable Cash: ${SpendableCashString}";
+
+        if (CivilianKilledMoney == MoneyTakenForKillingCivilians && SpendableCash == SpendableCashMoneyInt)
         {
             nextMenu = true;
             if (Keyboard.current.anyKey.wasPressedThisFrame)
@@ -319,37 +368,50 @@ public class FinishedHeistHandler : MonoBehaviour
 
     private void UpdateTotalBagsXpText()
     {
-        if(updateXp == true)
+        TotalBagsXPText.gameObject.SetActive(true);
+        TotalBagsXpFloat = Mathf.MoveTowards(TotalBagsXpFloat, XpEarned, XpEarned / 5 * Time.deltaTime);
+
+        NumberFormatInfo NFI = new CultureInfo("en-US", false).NumberFormat;
+        NFI.CurrencyGroupSeparator = ".";
+        NFI.CurrencySymbol = "";
+        CurrentXpString = Convert.ToDecimal(CurrentXpFloat).ToString("C0", NFI);
+        TotalBagsXpString = Convert.ToDecimal(TotalBagsXpFloat).ToString("C0", NFI);
+
+        TotalBagsXPText.text = $"Total Bags XP: {TotalBagsXpString}";
+
+        if (TotalBagsXpFloat == XpEarned)
         {
-            TotalBagsXPText.gameObject.SetActive(true);
-            TotalBagsXpFloat = Mathf.MoveTowards(TotalBagsXpFloat, XpEarned, XpEarned / 5 * Time.deltaTime);
-
-            NumberFormatInfo NFI = new CultureInfo("en-US", false).NumberFormat;
-            NFI.CurrencyGroupSeparator = ".";
-            NFI.CurrencySymbol = "";
+            CurrentXpFloat = Mathf.MoveTowards(CurrentXpFloat, TotalXp, TotalXp / 5 * Time.deltaTime);
+            EarnedXpText.text = $"Earned XP: {CurrentXpString}";
             CurrentXpString = Convert.ToDecimal(CurrentXpFloat).ToString("C0", NFI);
-            TotalBagsXpString = Convert.ToDecimal(TotalBagsXpFloat).ToString("C0", NFI);
 
-            TotalBagsXPText.text = $"Total Bags XP: {TotalBagsXpString}";
-
-            if (TotalBagsXpFloat == XpEarned)
+            if (doOnceLevelSystem == false)
             {
-                CurrentXpFloat = Mathf.MoveTowards(CurrentXpFloat, TotalXp, TotalXp / 5 * Time.deltaTime);
-                EarnedXpText.text = $"Earned XP: {CurrentXpString}";
-                CurrentXpString = Convert.ToDecimal(CurrentXpFloat).ToString("C0", NFI);
-            }
-
-            if(CurrentXpFloat == TotalXp)
-            {
-                updateXp = false;
+                UpdateLevel();
+                doOnceLevelSystem = true;
             }
         }
     }
 
     private void UpdateLevel()
     {
-        //TODO Update Levels
-        //Load Back To Main Menu
+        LevelHandler.instance.AddExperience(TotalXp);
+
+        if(LevelHandler.instance.levelSystemAnimatedExperience == LevelHandler.instance.levelSystemExperience && LevelHandler.instance.levelSystemLevel == LevelHandler.instance.levelSystemAnimatedLevel)
+        {
+            nextMenu = true;
+            readyToLoadBackToMenu = true;
+        }
+    }
+
+    private void LookForInput()
+    {
+        if (Keyboard.current.anyKey.wasPressedThisFrame)
+        {
+            FirebaseManager.instance.UpdateUserData(LevelHandler.instance.levelSystem.level, LevelHandler.instance.levelSystem.experience, SpendableCashMoneyInt + GameManager.instance.PlayerCurrentSpendableCash, OffshoreAccountMoneyInt + GameManager.instance.PlayerCurrentOffshoreAccount, GameManager.instance.HeistsCompleted += 1, GameManager.instance.PlayTimeInHeistsSeconds);
+            SceneManager.LoadSceneAsync(1);
+            MainMenuHandler.instance.firstTimeLoading = false;
+        }
     }
     #endregion xp menu
 }

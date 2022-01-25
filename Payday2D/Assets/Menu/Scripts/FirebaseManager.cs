@@ -4,6 +4,7 @@ using System.Collections;
 using Firebase.Auth;
 using TMPro;
 using System.IO;
+using Firebase.Database;
 
 public class FirebaseManager : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class FirebaseManager : MonoBehaviour
     [Header("Firebase")]
     public FirebaseAuth auth;
     public FirebaseUser user;
+    public DatabaseReference DbRefrence;
     [Space(5f)]
 
     [Header("Login Refrences")]
@@ -71,6 +73,7 @@ public class FirebaseManager : MonoBehaviour
 
         auth.StateChanged += AuthStateChanged;
         AuthStateChanged(this, null);
+        DbRefrence = FirebaseDatabase.DefaultInstance.RootReference;
     }
 
     private IEnumerator CheckAndFixDependencies()
@@ -144,17 +147,7 @@ public class FirebaseManager : MonoBehaviour
         {
             bool signedIn = user != auth.CurrentUser && auth.CurrentUser != null;
 
-            if(!signedIn && user != null)
-            {
-                Debug.Log("Signed Out");
-            }
-
             user = auth.CurrentUser;
-
-            if (signedIn)
-            {
-                Debug.Log($"Signed In: {user.DisplayName}");
-            }
         }
     }
 
@@ -166,6 +159,8 @@ public class FirebaseManager : MonoBehaviour
 
     public void LoginButton()
     {
+        StartCoroutine(SetUsernameInDatabase());
+        UpdateUserData(0, 0, 10000, 100000, 0, 0);
         StartCoroutine(LoginLogic(loginEmail.text, loginPassword.text));
     }
 
@@ -304,8 +299,6 @@ public class FirebaseManager : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log($"Firebase User Created Succsessfully: {user.DisplayName} ({user.UserId})");
-
                     StartCoroutine(SendVerificationEmail());
                 }
             }
@@ -345,8 +338,143 @@ public class FirebaseManager : MonoBehaviour
             else
             {
                 AuthUiManager.instance.AwaitVerification(true, user.Email, null);
-                Debug.Log($"EMAIL SENT SUCCESSFULLY TO: {user.Email}");
             }
+        }
+    }
+
+    public void UpdateUserData(int level, int experience, int spendableCash, int offshoreAccount, int completedHeists, int playtimeseconds)
+    {
+        StartCoroutine(UpdateLevel(level));
+        StartCoroutine(UpdateExperience(experience));
+        StartCoroutine(UpdateSpendableCash(spendableCash));
+        StartCoroutine(UpdateOffShoreAccount(offshoreAccount));
+        StartCoroutine(UpdateCompletedHeists(completedHeists));
+        StartCoroutine(UpdatePlayTimeSeconds(playtimeseconds));
+    }
+
+    public void LoadUserDat()
+    {
+        StartCoroutine(LoadUserData());
+    }
+
+    private IEnumerator SetUsernameInDatabase()
+    {
+        var DBTask = DbRefrence.Child("users").Child(user.UserId).Child("username").SetValueAsync(user.DisplayName);
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+        if (DBTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        }
+    }
+
+    private IEnumerator UpdateLevel(int level)
+    {
+        var DBTask = DbRefrence.Child("users").Child(user.UserId).Child("level").SetValueAsync(level);
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+        if (DBTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        }
+    }
+
+    private IEnumerator UpdateExperience(int experience)
+    {
+        var DBTask = DbRefrence.Child("users").Child(user.UserId).Child("experience").SetValueAsync(experience);
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+        if (DBTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        }
+    }
+
+    private IEnumerator UpdateSpendableCash(int spendableCash)
+    {
+        var DBTask = DbRefrence.Child("users").Child(user.UserId).Child("spendablecash").SetValueAsync(spendableCash);
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+        if(DBTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        }
+    }
+
+    private IEnumerator UpdateOffShoreAccount(int offshoreAccount)
+    {
+        var DBTask = DbRefrence.Child("users").Child(user.UserId).Child("offshoreaccount").SetValueAsync(offshoreAccount);
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+        if(DBTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        }
+    }
+
+    private IEnumerator UpdatePlayTimeSeconds(int playtimeSeconds)
+    {
+        var DBTask = DbRefrence.Child("users").Child(user.UserId).Child("playtimeseconds").SetValueAsync(playtimeSeconds);
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+        if (DBTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        }
+    }
+
+    private IEnumerator UpdateCompletedHeists(int heists)
+    {
+        var DBTask = DbRefrence.Child("users").Child(user.UserId).Child("completedHeists").SetValueAsync(heists);
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+        if (DBTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        }
+    }
+
+    private IEnumerator LoadUserData()
+    {
+        var DBTask = DbRefrence.Child("users").Child(user.UserId).GetValueAsync();
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+        if (DBTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        }
+        else if (DBTask.Result.Value == null)
+        {
+            LevelHandler.instance.levelSystem.level = 0;
+            LevelHandler.instance.levelSystem.experience = 0;
+            GameManager.instance.PlayerCurrentSpendableCash = 10000;
+            GameManager.instance.PlayerCurrentOffshoreAccount = 100000;
+            GameManager.instance.HeistsCompleted = 0;
+            GameManager.instance.PlayTimeInHeistsSeconds = 0;
+        }
+        else
+        {
+            //Data has been retrieved
+            DataSnapshot snapshot = DBTask.Result;
+
+            int loadedLevel = int.Parse(snapshot.Child("level").Value.ToString());
+            LevelHandler.instance.levelSystem.level = loadedLevel;
+            LevelHandler.instance.levelSystemAnimated.level = loadedLevel;
+            int loadedExperience = int.Parse(snapshot.Child("experience").Value.ToString());
+            LevelHandler.instance.levelSystem.experience = loadedExperience;
+            LevelHandler.instance.levelSystemAnimated.experience = loadedExperience;
+
+            int.TryParse(snapshot.Child("spendablecash").Value.ToString(), out GameManager.instance.PlayerCurrentSpendableCash);
+            int.TryParse(snapshot.Child("offshoreaccount").Value.ToString(), out GameManager.instance.PlayerCurrentOffshoreAccount);
+            int.TryParse(snapshot.Child("completedHeists").Value.ToString(), out GameManager.instance.HeistsCompleted);
+            int.TryParse(snapshot.Child("playtimeseconds").Value.ToString(), out GameManager.instance.PlayTimeInHeistsSeconds);
         }
     }
 }

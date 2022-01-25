@@ -53,7 +53,6 @@ public class BankHeistRandomizer : MonoBehaviour
 
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
         if(instance == null)
         {
             instance = this;
@@ -61,6 +60,7 @@ public class BankHeistRandomizer : MonoBehaviour
         {
             Destroy(instance.gameObject);
         }
+        Destroy(BankHeistSetup.instance.gameObject);
     }
 
     private void Start()

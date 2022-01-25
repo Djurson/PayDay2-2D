@@ -1,13 +1,9 @@
 using UnityEngine;
-using Firebase.Auth;
 using TMPro;
 using UnityEngine.UI;
 
 public class PlayerUiHandler : MonoBehaviour
 {
-    [Header("Firebase")]
-    public FirebaseUser user;
-
     [Header("Sprites")]
     [SerializeField] private Sprite AutomaticIcon;
     [SerializeField] private Sprite SemiAutomaticIcon;
@@ -30,10 +26,9 @@ public class PlayerUiHandler : MonoBehaviour
 
     private void Start()
     {
-        if(GameHandler.instance.user != null)
+        if(FirebaseManager.instance.user != null)
         {
-            user = GameHandler.instance.user;
-            UsernameText.text = $"{user.DisplayName}";
+            UsernameText.text = $"{FirebaseManager.instance.user.DisplayName}";
         }
     }
 

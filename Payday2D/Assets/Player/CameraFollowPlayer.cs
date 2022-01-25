@@ -5,6 +5,7 @@ using UnityEngine;
 public class CameraFollowPlayer : MonoBehaviour
 {
     private GameObject cam;
+    public GameObject cameraFade;
     public float lerpTime;
 
     private void Update()

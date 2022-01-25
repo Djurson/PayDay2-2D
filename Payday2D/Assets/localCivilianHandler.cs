@@ -44,8 +44,8 @@ public class localCivilianHandler : MonoBehaviour
         {
             if(hasSentInfo == false)
             {
-                GameHandler.instance.CiviliansKilled += 1;
-                GameHandler.instance.MoneyTakenForKillingCivilians += 2250;
+                GameManager.instance.CiviliansKilled += 1;
+                GameManager.instance.MoneyTakenForKillingCivilians += 2250;
                 hasSentInfo = true;
             }
             rayCastScript.localDetection = 0;

@@ -3,7 +3,10 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using UnityEngine.UI;
 using System.IO;
+using System;
+using System.Globalization;
 
 public class MainMenuHandler : MonoBehaviour
 {
@@ -21,6 +24,7 @@ public class MainMenuHandler : MonoBehaviour
     [SerializeField] private TextMeshProUGUI versionText;
     [SerializeField] private TextMeshProUGUI playtimeText;
 
+
     [Header("Saving Logic")]
     [SerializeField] private GameObject savingAnimationGameObject;
 
@@ -28,9 +32,22 @@ public class MainMenuHandler : MonoBehaviour
     [SerializeField] private TextAsset TipsTextFile;
     private string TipsTextFileText;
 
+    [Header("Stats")]
+    public TMP_Text LevelText;
+    public Image ExperienceCircle;
+    [SerializeField] private TMP_Text SpendableCashText;
+    [SerializeField] private TMP_Text OffshoreAccountText;
+    [SerializeField] private TMP_Text CompletedHeistsText;
+    [SerializeField] private TMP_Text PlaytimeText;
+
+    private int seconds;
+    private int minutes;
+    private int hours;
+
+    public bool firstTimeLoading = true;
+
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
         if (instance == null)
         {
             instance = this;
@@ -52,8 +69,17 @@ public class MainMenuHandler : MonoBehaviour
             }
         }
         versionText.text = $"Version: {Application.version}";
-        ClearUI();
-        startupMenu.SetActive(true);
+        if(firstTimeLoading == true)
+        {
+            ClearUI();
+            startupMenu.SetActive(true);
+        }
+        else
+        {
+            ActivateMainMenu();
+        }
+
+        FirebaseManager.instance.LoadUserDat();
     }
 
     private void Update()
@@ -69,7 +95,18 @@ public class MainMenuHandler : MonoBehaviour
             }
         }
 
-        playtimeText.text = $"Playtime: {PlaytimeHandler.instance.hours} Hours {PlaytimeHandler.instance.minutes} Minutes";
+        NumberFormatInfo NFI = new CultureInfo("en-US", false).NumberFormat;
+        NFI.CurrencyGroupSeparator = ".";
+        NFI.CurrencySymbol = "";
+        SpendableCashText.text = $"Cash: ${Convert.ToDecimal(GameManager.instance.PlayerCurrentSpendableCash).ToString("C0", NFI)}";
+        OffshoreAccountText.text = $"Offshore Balance: ${Convert.ToDecimal(GameManager.instance.PlayerCurrentOffshoreAccount).ToString("C0", NFI)}";
+        CompletedHeistsText.text = $"Heists completed: {GameManager.instance.HeistsCompleted}";
+
+        seconds = (GameManager.instance.PlayTimeInHeistsSeconds % 60);
+        minutes = (GameManager.instance.PlayTimeInHeistsSeconds / 60) % 60;
+        hours = (GameManager.instance.PlayTimeInHeistsSeconds / 3600);
+
+        PlaytimeText.text = $"Time Spent In Heists: {hours} h, {minutes} min, {seconds} sec";
     }
 
     private void ClearUI()
