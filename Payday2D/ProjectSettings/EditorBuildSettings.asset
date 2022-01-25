@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Bank Heist/BankHeist.unity
     guid: 9f7750100e85ac247881e452eeecb48a
+  - enabled: 1
+    path: Assets/Bank Heist/FinishedBankScene.unity
+    guid: cba9c4d0931684545ae9cce1c4c82a8d
   m_configObjects: {}

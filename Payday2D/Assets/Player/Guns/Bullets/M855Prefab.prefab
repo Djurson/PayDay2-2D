@@ -73,7 +73,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5000
+  m_SortingOrder: 6000
   m_Sprite: {fileID: 21300000, guid: 5b72acf21a630134cace0695a58da4dd, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -144,5 +144,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d294d270635e8041b4775fdc58f4d1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 0
   WoodBulletImpact: {fileID: 5655253021172412597, guid: 3b830c0b987d48343bd24e6a163172f6, type: 3}
   BloodParticleEffect: {fileID: 4653054605663688503, guid: 2240ffc757b608540928bf38be88b110, type: 3}

@@ -20,11 +20,13 @@ public class PlayerUiHandler : MonoBehaviour
     [SerializeField] private TMP_Text UsernameText;
     [SerializeField] private TMP_Text PrimaryAmmoText;
     [SerializeField] private TMP_Text SecondaryAmmoText;
+    [SerializeField] private TMP_Text SpecialText;
 
     [Header("Script Refrences")]
     [SerializeField] private PlayerGunHandler gunHandler;
     [SerializeField] private WeaponShootingHandler PrimaryWeapon;
     [SerializeField] private WeaponShootingHandler SecondaryWeapon;
+    [SerializeField] private playerInteraction PlayerInteraction;
 
     private void Start()
     {
@@ -69,5 +71,13 @@ public class PlayerUiHandler : MonoBehaviour
 
         SecondaryAmmoText.text = $"{SecondaryWeapon.MagAmmo}/{SecondaryWeapon.TotalAmmo}";
         PrimaryAmmoText.text = $"{PrimaryWeapon.MagAmmo}/{PrimaryWeapon.TotalAmmo}";
+        if(PlayerInteraction.bodyBags != 0)
+        {
+            SpecialText.text = $"{PlayerInteraction.bodyBags}";
+        }
+        else
+        {
+            SpecialText.text = $"<color=#FF3333>{PlayerInteraction.bodyBags}</color=#FF3333>";
+        }
     }
 }

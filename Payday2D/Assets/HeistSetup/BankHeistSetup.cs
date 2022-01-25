@@ -108,8 +108,8 @@ public class BankHeistSetup : MonoBehaviour
             user1DisplayText.text = $"<color=#FF855F>{textBeforeUserName}</color=#FF855F>           <color=#ffffff>Player           {playerStateString}</color=#ffffff>";
         }
         user2DisplayText.text = $"<color=#00FF68>Player 2</color=#00FF68>           <color=#ffffff>Empty            Ready</color=#ffffff>";
-        user3DisplayText.text = $"<color=#81FBFF>Player 2</color=#81FBFF>           <color=#ffffff>Empty            Ready</color=#ffffff>";
-        user4DisplayText.text = $"<color=#F597FF>Player 2</color=#F597FF>           <color=#ffffff>Empty            Ready</color=#ffffff>";
+        user3DisplayText.text = $"<color=#81FBFF>Player 3</color=#81FBFF>           <color=#ffffff>Empty            Ready</color=#ffffff>";
+        user4DisplayText.text = $"<color=#F597FF>Player 4</color=#F597FF>           <color=#ffffff>Empty            Ready</color=#ffffff>";
         ClearUI();
         ClearDrillIcons();
         ClearBodyBagIcons();

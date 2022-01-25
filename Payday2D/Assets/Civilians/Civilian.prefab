@@ -298,6 +298,9 @@ MonoBehaviour:
   BagLayer:
     serializedVersion: 2
     m_Bits: 256
+  DeadBodyLayer:
+    serializedVersion: 2
+    m_Bits: 4096
   localPlayerDetection: {fileID: 0}
   detectionIcon: {fileID: 0}
   player: {fileID: 0}
@@ -366,13 +369,17 @@ MonoBehaviour:
   civilianIndex: 0
   BaseSpriteRenderer: {fileID: 1423494308618551813}
   civilianState: 0
-  interactionTime: 0
+  interactionTime: 3
   deadSprite: {fileID: 21300000, guid: 316fcab546b23f544b144b7fd5563835, type: 3}
+  DeadBodyLayer:
+    serializedVersion: 2
+    m_Bits: 4096
   rayCastScript: {fileID: 4437932084468442551}
   targetChooserScript: {fileID: 1423494309420227401}
   targetSetterScript: {fileID: 1423494309420227398}
   pathfindingScript: {fileID: 1423494309420227396}
   randomizerScript: {fileID: 1423494309420227394}
+  CapsuleTrigger: {fileID: 1423494309420227397}
 --- !u!1 &1423494310027426223
 GameObject:
   m_ObjectHideFlags: 0

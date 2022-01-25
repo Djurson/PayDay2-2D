@@ -55,15 +55,20 @@ public class LobbyManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
-
-    private void Start()
-    {
-        if(FirebaseManager.instance.user != null)
+        if (FirebaseManager.instance.user != null)
         {
             user = FirebaseManager.instance.user;
             auth = FirebaseManager.instance.auth;
         }
+        if(GameHandler.instance != null)
+        {
+            user = GameHandler.instance.user;
+            auth = GameHandler.instance.auth;
+        }
+    }
+
+    private void Start()
+    {
         LoadProfile();
     }
 

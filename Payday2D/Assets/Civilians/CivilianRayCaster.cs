@@ -27,10 +27,11 @@ public class CivilianRayCaster : MonoBehaviour
 
     private Collider2D PlayerRayCastCollider;
     private Collider2D BagRayCastCollider;
-    private RaycastHit2D BodyRayCast;
+    private Collider2D BodyRayCollider;
 
     [SerializeField] private LayerMask PlayerLayer;
     [SerializeField] private LayerMask BagLayer;
+    [SerializeField] private LayerMask DeadBodyLayer;
 
     private RaycastHit2D hit;
 
@@ -90,6 +91,7 @@ public class CivilianRayCaster : MonoBehaviour
     {
         PlayerRayCastCollider = Physics2D.OverlapCircle(transform.position, RayCastDistance, PlayerLayer.value);
         BagRayCastCollider = Physics2D.OverlapCircle(transform.position, RayCastDistance, BagLayer.value);
+        BodyRayCollider = Physics2D.OverlapCircle(transform.position, RayCastDistance, DeadBodyLayer.value);
 
         if (PlayerRayCastCollider != null)
         {
@@ -122,22 +124,39 @@ public class CivilianRayCaster : MonoBehaviour
 
             dot = Vector2.Dot(civillianForward, normalizedDir);
 
-            if (dot > -0.77f)
-            {
-                hit = Physics2D.Raycast(this.transform.position, normalizedDir, RayCastDistance);
+            hit = Physics2D.Raycast(this.transform.position, normalizedDir, RayCastDistance);
 
-                if (hit.collider != null)
+            if (hit.collider != null)
+            {
+                if (hit.collider.CompareTag("Bag") || hit.collider.CompareTag("BodyBag"))
                 {
-                    if (hit.collider.CompareTag("Player"))
-                    {
-                        seeingPlayer = true;
-                    }
-                    if (!hit.collider.CompareTag("Player"))
-                        seeingPlayer = false;
+                    seeingPlayer = true;
                 }
-                else
+                if (!hit.collider.CompareTag("Bag") && !hit.collider.CompareTag("BodyBag"))
                     seeingPlayer = false;
             }
+            else
+                seeingPlayer = false;
+        } else if(BodyRayCollider != null && BodyRayCollider.gameObject.CompareTag("DeadCivilian") || BodyRayCollider != null && BodyRayCollider.gameObject.CompareTag("DeadGuard"))
+        {
+            civillianForward = transform.TransformDirection(Vector2.up);
+            normalizedDir = Vector3.Normalize(BodyRayCollider.gameObject.transform.position - this.transform.position);
+
+            dot = Vector2.Dot(civillianForward, normalizedDir);
+
+            hit = Physics2D.Raycast(this.transform.position, normalizedDir, RayCastDistance);
+
+            if (hit.collider != null)
+            {
+                if (hit.collider.CompareTag("DeadCivilian") || hit.collider.CompareTag("DeadGuard"))
+                {
+                    seeingPlayer = true;
+                }
+                if (!hit.collider.CompareTag("DeadCivilian") && !hit.collider.CompareTag("DeadGuard"))
+                    seeingPlayer = false;
+            }
+            else
+                seeingPlayer = false;
         }
         else
         {

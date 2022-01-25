@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using Firebase.Auth;
 
+public enum HeistState
+{
+    Stealth,
+    Loud
+};
+
 public class GameHandler : MonoBehaviour
 {
     public static GameHandler instance;
@@ -14,6 +20,15 @@ public class GameHandler : MonoBehaviour
     [Header("Firebase")]
     public FirebaseUser user;
     public FirebaseAuth auth;
+
+    [Header("Current Heist")]
+    public HeistState state;
+    public int CollectedLootValue;
+    public int XpEarned;
+    public int BagsCollected;
+    public int CiviliansKilled;
+    public int GuardsKilled;
+    public int MoneyTakenForKillingCivilians;
 
     private void Awake()
     {

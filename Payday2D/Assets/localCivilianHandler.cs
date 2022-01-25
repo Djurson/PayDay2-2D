@@ -18,6 +18,8 @@ public class localCivilianHandler : MonoBehaviour
 
     [Header("Dead Civilian")]
     [SerializeField] private Sprite deadSprite;
+    [SerializeField] private LayerMask DeadBodyLayer;
+    [SerializeField] private bool hasSentInfo = false;
 
     [Header("Script Refrences")]
     [SerializeField] private CivilianRayCaster rayCastScript;
@@ -25,6 +27,7 @@ public class localCivilianHandler : MonoBehaviour
     [SerializeField] private AIDestinationSetter targetSetterScript;
     [SerializeField] private AIPath pathfindingScript;
     [SerializeField] private civilianRandomizer randomizerScript;
+    [SerializeField] private CapsuleCollider2D CapsuleTrigger;
     private Rigidbody2D rb;
 
     private void Start()
@@ -39,6 +42,12 @@ public class localCivilianHandler : MonoBehaviour
 
         if (health == 0)
         {
+            if(hasSentInfo == false)
+            {
+                GameHandler.instance.CiviliansKilled += 1;
+                GameHandler.instance.MoneyTakenForKillingCivilians += 2250;
+                hasSentInfo = true;
+            }
             rayCastScript.localDetection = 0;
             rayCastScript.localPlayerDetection.detectedCivilians.Remove(rayCastScript);
             Destroy(rayCastScript.detectionIcon.gameObject);
@@ -49,10 +58,12 @@ public class localCivilianHandler : MonoBehaviour
             BaseSpriteRenderer.sprite = deadSprite;
             civilianState = CivilianState.Dead;
             rayCastScript.enabled = false;
+            Destroy(CapsuleTrigger);
             rb.mass = 1000000;
             rb.velocity = Vector2.zero;
             rb.angularVelocity = 0;
             gameObject.tag = "DeadCivilian";
+            gameObject.layer = LayerMask.NameToLayer("DeadBody");
         }
         else
             civilianState = CivilianState.Alive;

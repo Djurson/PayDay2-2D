@@ -36,5 +36,11 @@ public class BulletImpact : MonoBehaviour
             collision.gameObject.GetComponent<localCivilianHandler>().DealDamage(damage);
             Destroy(gameObject);
         }
+        if (collision.gameObject.CompareTag("DeadCivilian"))
+        {
+            GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            var instatiatedBulletImpact = Instantiate(BloodParticleEffect, transform.position, Quaternion.identity);
+            Destroy(gameObject);
+        }
     }
 }

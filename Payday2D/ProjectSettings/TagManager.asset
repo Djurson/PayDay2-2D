@@ -22,6 +22,9 @@ TagManager:
   - Wood
   - BulletImpactWood
   - DeadCivilian
+  - BodyBag
+  - FadeOutEffect
+  - DeadGuard
   layers:
   - Default
   - TransparentFX
@@ -35,7 +38,7 @@ TagManager:
   - Civilian
   - GoldBars
   - BulletImpact
-  - 
+  - DeadBody
   - 
   - 
   - 

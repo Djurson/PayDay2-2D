@@ -27,10 +27,12 @@ public class playerInteraction : MonoBehaviour
     private float interacting;
 
     [Header("Prefabs")]
-    public GameObject DrillBagPrefab;
-    public GameObject DrillBagChildPrefab;
-    public GameObject GoldBagPrefab;
-    public GameObject GoldBagChildPrefab;
+    [SerializeField] private GameObject DrillBagPrefab;
+    [SerializeField] private GameObject DrillBagChildPrefab;
+    [SerializeField] private GameObject GoldBagPrefab;
+    [SerializeField] private GameObject GoldBagChildPrefab;
+    [SerializeField] private GameObject BodyBagPrefab;
+    [SerializeField] private GameObject BodyBagChildPrefab;
 
     [Header("Game Objects")]
     public GameObject throwableObject;
@@ -41,6 +43,7 @@ public class playerInteraction : MonoBehaviour
     public Image interactionProgress;
     public TextMeshProUGUI playerInfoText;
     string interactionTextBinding;
+    public int bodyBags;
 
     [Header("Scripts")]
     private PlayerMovement _playerMovement;
@@ -88,7 +91,7 @@ public class playerInteraction : MonoBehaviour
 
             if(throwableObject == null)
             {
-                if (hit.collider.CompareTag("Bag") || hit.collider.CompareTag("DrillBag") || hit.collider.CompareTag("GoldBars"))
+                if (hit.collider.CompareTag("Bag") || hit.collider.CompareTag("DrillBag") || hit.collider.CompareTag("GoldBars") || hit.collider.CompareTag("BodyBag"))
                 {
                     playerInfoText.enabled = true;
                     closeByInteractebleObject = hit.collider.gameObject;
@@ -98,7 +101,9 @@ public class playerInteraction : MonoBehaviour
 
                 if (hit.collider.CompareTag("ThermalDrill"))
                 {
-                    if (hit.collider.GetComponent<DrillInteraction>().drillState == DrillState.Setup || hit.collider.GetComponent<DrillInteraction>().drillState == DrillState.Failure)
+                    DrillInteraction drillInteraction;
+                    hit.collider.TryGetComponent<DrillInteraction>(out drillInteraction);
+                    if (drillInteraction != null && drillInteraction.drillState == DrillState.Setup || drillInteraction != null && drillInteraction.drillState == DrillState.Failure)
                     {
                         if (hit.collider.GetComponent<DrillInteraction>().drillState == DrillState.Setup)
                         {
@@ -118,7 +123,7 @@ public class playerInteraction : MonoBehaviour
                     }
                 }
 
-                if (hit.collider.CompareTag("DeadCivilian"))
+                if (hit.collider.CompareTag("DeadCivilian") && bodyBags > 0)
                 {
                     playerInfoText.enabled = true;
                     closeByInteractebleObject = hit.collider.gameObject;
@@ -174,7 +179,7 @@ public class playerInteraction : MonoBehaviour
     {
         if(closeByInteractebleObject != null)
         {
-            if (closeByInteractebleObject.CompareTag("Bag") || closeByInteractebleObject.CompareTag("DrillBag") || hit.collider.CompareTag("GoldBars"))
+            if (closeByInteractebleObject.CompareTag("Bag") || closeByInteractebleObject.CompareTag("DrillBag") || hit.collider.CompareTag("GoldBars") || hit.collider.CompareTag("DeadCivilian") || closeByInteractebleObject.CompareTag("BodyBag"))
             {
                 if(interaction == interactionMax)
                 {
@@ -195,6 +200,18 @@ public class playerInteraction : MonoBehaviour
                         Destroy(closeByInteractebleObject);
                         closeByInteractebleObject = null;
                         _playerCarry = playerCarryingState.Gold;
+                    } else if (closeByInteractebleObject.CompareTag("DeadCivilian") || closeByInteractebleObject.CompareTag("BodyBag"))
+                    {
+                        if (closeByInteractebleObject.CompareTag("DeadCivilian"))
+                        {
+                            bodyBags -= 1;
+                        }
+                        throwableObject = BodyBagPrefab;
+                        var instatiated = Instantiate(BodyBagChildPrefab, transform);
+                        drillBagChild = instatiated.gameObject;
+                        Destroy(closeByInteractebleObject);
+                        closeByInteractebleObject = null;
+                        _playerCarry = playerCarryingState.Person;
                     }
                 }
             }
@@ -258,7 +275,7 @@ public class playerInteraction : MonoBehaviour
             rayCast();
         }
 
-        if(closeByInteractebleObject == null)
+        if (closeByInteractebleObject == null)
         {
             playerInfoText.enabled = false;
             interactionMax = 0;
