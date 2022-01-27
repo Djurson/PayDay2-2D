@@ -42,5 +42,18 @@ public class BulletImpact : MonoBehaviour
             var instatiatedBulletImpact = Instantiate(BloodParticleEffect, transform.position, Quaternion.identity);
             Destroy(gameObject);
         }
+        if (collision.gameObject.CompareTag("Guard"))
+        {
+            GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            var instatiatedBulletImpact = Instantiate(BloodParticleEffect, transform.position, Quaternion.identity);
+            collision.gameObject.GetComponent<LocalGuardHandler>().DealDamage(damage * 0.8f);
+            Destroy(gameObject);
+        }
+        if (collision.gameObject.CompareTag("DeadGuard"))
+        {
+            GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            var instatiatedBulletImpact = Instantiate(BloodParticleEffect, transform.position, Quaternion.identity);
+            Destroy(gameObject);
+        }
     }
 }

@@ -1,9 +1,14 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerUiHandler : MonoBehaviour
 {
+    [Header("Objects")]
+    public GameObject playingUi;
+    public GameObject FailedHeistUi;
+
     [Header("Sprites")]
     [SerializeField] private Sprite AutomaticIcon;
     [SerializeField] private Sprite SemiAutomaticIcon;
@@ -26,7 +31,10 @@ public class PlayerUiHandler : MonoBehaviour
 
     private void Start()
     {
-        if(FirebaseManager.instance.user != null)
+        playingUi.SetActive(true);
+        FailedHeistUi.SetActive(false);
+
+        if(FirebaseManager.instance != null && FirebaseManager.instance.user != null)
         {
             UsernameText.text = $"{FirebaseManager.instance.user.DisplayName}";
         }
@@ -66,13 +74,33 @@ public class PlayerUiHandler : MonoBehaviour
 
         SecondaryAmmoText.text = $"{SecondaryWeapon.MagAmmo}/{SecondaryWeapon.TotalAmmo}";
         PrimaryAmmoText.text = $"{PrimaryWeapon.MagAmmo}/{PrimaryWeapon.TotalAmmo}";
-        if(PlayerInteraction.bodyBags != 0)
+        if(PlayerInteraction.bodyBags != 0 && PlayerInteraction.cableTies != 0)
         {
-            SpecialText.text = $"{PlayerInteraction.bodyBags}";
+            SpecialText.text = $"{PlayerInteraction.bodyBags}/{PlayerInteraction.cableTies}";
+        }
+        else if(PlayerInteraction.bodyBags == 0 && PlayerInteraction.cableTies != 0)
+        {
+            SpecialText.text = $"<color=#FF3333>{PlayerInteraction.bodyBags}</color=#FF3333>/{PlayerInteraction.cableTies}";
+        } else if(PlayerInteraction.bodyBags != 0 && PlayerInteraction.cableTies == 0)
+        {
+            SpecialText.text = $"{PlayerInteraction.bodyBags}/<color=#FF3333>{PlayerInteraction.cableTies}</color=#FF3333>";
         }
         else
         {
-            SpecialText.text = $"<color=#FF3333>{PlayerInteraction.bodyBags}</color=#FF3333>";
+            SpecialText.text = $"<color=#FF3333>{PlayerInteraction.bodyBags}/{PlayerInteraction.cableTies}</color=#FF3333>";
         }
+
+        if(GameManager.instance.heistState == HeistState.Failed)
+        {
+            playingUi.SetActive(false);
+            FailedHeistUi.SetActive(true);
+        }
+    }
+
+    public void LoadLevel(int levelIndex)
+    {
+        PlaytimeHandler.instance.SendData();
+        FirebaseManager.instance.UpdateUserData(LevelHandler.instance.levelSystem.level, LevelHandler.instance.levelSystem.experience, GameManager.instance.PlayerCurrentSpendableCash, GameManager.instance.PlayerCurrentOffshoreAccount, GameManager.instance.HeistsCompleted, GameManager.instance.PlayTimeInHeistsSeconds + PlaytimeHandler.instance.playtime);
+        SceneManager.LoadSceneAsync(levelIndex);
     }
 }

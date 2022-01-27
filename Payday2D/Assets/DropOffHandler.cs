@@ -23,24 +23,27 @@ public class DropOffHandler : MonoBehaviour
 
     private void Update()
     {
-        if(leave == true)
+        if(GameManager.instance.heistState != HeistState.Failed)
         {
-            leaveFloat = Mathf.MoveTowards(leaveFloat, 2f, Time.deltaTime);
-        }
-
-        if(leaveFloat == 2)
-        {
-            if(VanDropOffOutline != null)
-                Destroy(VanDropOffOutline);
-            if(boxTrigger != null)
-                Destroy(boxTrigger);
-            if(loadNextScenelevel == false)
+            if (leave == true)
             {
-                fadeOutEffect.SetActive(true);
-                PlaytimeHandler.instance.StopCounting();
-                GameManager.instance.PlayTimeInHeistsSeconds += PlaytimeHandler.instance.playtime;
-                StartCoroutine("waitForOneSecond");
-                loadNextScenelevel = true;
+                leaveFloat = Mathf.MoveTowards(leaveFloat, 2f, Time.deltaTime);
+            }
+
+            if (leaveFloat == 2)
+            {
+                if (VanDropOffOutline != null)
+                    Destroy(VanDropOffOutline);
+                if (boxTrigger != null)
+                    Destroy(boxTrigger);
+                if (loadNextScenelevel == false)
+                {
+                    fadeOutEffect.SetActive(true);
+                    PlaytimeHandler.instance.StopCounting();
+                    GameManager.instance.PlayTimeInHeistsSeconds += PlaytimeHandler.instance.playtime;
+                    StartCoroutine("waitForOneSecond");
+                    loadNextScenelevel = true;
+                }
             }
         }
     }

@@ -5,69 +5,54 @@ using Pathfinding;
 
 public class AiPathFindingRandomTargetChooser : MonoBehaviour
 {
-    private AIDestinationSetter destionationSetter;
-
-    public List<AIDestinationSetter> destinationSetters;
+    public AIDestinationSetter destionationSetter;
 
     private int CurrentTarget;
 
-    private GameObject[] Targets;
-    public GameObject[] Civilians;
+    public Transform startTransform;
 
-    public bool findNewTarget;
+    public bool Standing = true;
 
     private void Start()
     {
         destionationSetter = GetComponent<AIDestinationSetter>();
-        Targets = GameObject.FindGameObjectsWithTag("AiTargets");
-        Civilians = GameObject.FindGameObjectsWithTag("Civilian");
 
-        for (int i = 0; i < Civilians.Length; i++)
+        destionationSetter.target = startTransform;
+
+        if (Standing == false)
         {
-            destinationSetters.Add(Civilians[i].GetComponent<AIDestinationSetter>());
+            checkDistance();
         }
-
-        UpdateDestination();
     }
 
-    private void Update()
+    private void checkDistance()
     {
-        if(Vector2.Distance(Targets[CurrentTarget].transform.position, this.transform.position) < 1)
+        if (Vector2.Distance(destionationSetter.target.transform.position, this.transform.position) < 1)
         {
-            this.transform.rotation = Quaternion.Lerp(this.transform.rotation, Targets[CurrentTarget].transform.rotation, 1.5f * Time.deltaTime);
+            this.transform.rotation = Quaternion.Lerp(this.transform.rotation, destionationSetter.target.rotation, 1.5f * Time.deltaTime);
             StartCoroutine("waitForSeconds");
         }
     }
 
+    private void Update()
+    {
+        checkDistance();
+    }
+
     private void UpdateDestination()
     {
-        CurrentTarget = Random.Range(0, Targets.Length);
+        CurrentTarget = Random.Range(0, BankHeistRandomizer.instance.AiSpawnPoints.Count);
 
-        for(int i = 0; i < Civilians.Length; i++)
-        {
-            if(destinationSetters[i] != this.destionationSetter)
-            {
-                if (destinationSetters[i].target != Targets[CurrentTarget])
-                {
-                    findNewTarget = false;
-                }
-                else if (destinationSetters[i].target != Targets[CurrentTarget])
-                {
-                    findNewTarget = true;
-                }
-            }
-        }
+        destionationSetter.target = BankHeistRandomizer.instance.AiSpawnPoints[CurrentTarget].transform;
 
-        if (findNewTarget == true)
-            UpdateDestination();
-
-        destionationSetter.target = Targets[CurrentTarget].transform;
+        BankHeistRandomizer.instance.AiSpawnPoints.Remove(BankHeistRandomizer.instance.AiSpawnPoints[CurrentTarget]);
     }
 
     private IEnumerator waitForSeconds()
     {
         WaitForSeconds delay = new WaitForSeconds(Random.Range(10,50));
         yield return delay;
+        BankHeistRandomizer.instance.AiSpawnPoints.Add(destionationSetter.target.gameObject);
         UpdateDestination();
         StopCoroutine("waitForSeconds");
     }

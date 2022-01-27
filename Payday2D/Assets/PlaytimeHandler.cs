@@ -33,6 +33,12 @@ public class PlaytimeHandler : MonoBehaviour
         StartCoroutine("AddHeistPlaytime");
     }
 
+    public void SendData()
+    {
+        StopCounting();
+        GameManager.instance.PlayTimeInHeistsSeconds += playtime;
+    }
+
     private IEnumerator AddHeistPlaytime()
     {
         WaitForSeconds delay = new WaitForSeconds(1);

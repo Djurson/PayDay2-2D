@@ -56,27 +56,29 @@ public class PlayerGunHandler : MonoBehaviour
 
     private void Update()
     {
-        playerInput.KeyboardInputs.Aim.performed += Aim;
-        playerInput.KeyboardInputs.Aim.canceled += StopAiming;
-        playerInput.KeyboardInputs.SwitchPrimaryWeapon.performed += SwitchToPrimary;
-        playerInput.KeyboardInputs.SwitchSecondary.performed += SwitchToSecondary;
-        playerInput.KeyboardInputs.MouseSwitchWeapon.performed += SwitchWeapon;
+        if(GameManager.instance.heistState != HeistState.Failed && PrimaryWeapon.GetComponent<WeaponShootingHandler>().isReloading == false && SecondaryWeapon.GetComponent<WeaponShootingHandler>().isReloading == false)
+        {
+            playerInput.KeyboardInputs.Aim.performed += Aim;
+            playerInput.KeyboardInputs.Aim.canceled += StopAiming;
+            playerInput.KeyboardInputs.SwitchPrimaryWeapon.performed += SwitchToPrimary;
+            playerInput.KeyboardInputs.SwitchSecondary.performed += SwitchToSecondary;
 
-        if(aimState == playerAimState.Aiming)
-        {
-            cam.orthographicSize = Mathf.MoveTowards(cam.orthographicSize, ZoomIn, 5 * Time.deltaTime);
-            vignetteFx.intensity.value = Mathf.MoveTowards(vignetteFx.intensity.value, 0.4f, Time.deltaTime);
-            chromaticAberrationFx.intensity.value = Mathf.MoveTowards(chromaticAberrationFx.intensity.value, 0.35f, Time.deltaTime);
-            lensDistortionFx.intensity.value = Mathf.MoveTowards(lensDistortionFx.intensity.value, -0.25f, Time.deltaTime);
-            bloomFx.intensity.value = Mathf.MoveTowards(bloomFx.intensity.value, 1.5f, Time.deltaTime);
-        }
-        else
-        {
-            cam.orthographicSize = Mathf.MoveTowards(cam.orthographicSize, ZoomOut, 5 * Time.deltaTime);
-            vignetteFx.intensity.value = Mathf.MoveTowards(vignetteFx.intensity.value, 0.15f, Time.deltaTime);
-            chromaticAberrationFx.intensity.value = Mathf.MoveTowards(chromaticAberrationFx.intensity.value, 0.07f, Time.deltaTime);
-            lensDistortionFx.intensity.value = Mathf.MoveTowards(lensDistortionFx.intensity.value, 0, Time.deltaTime);
-            bloomFx.intensity.value = Mathf.MoveTowards(bloomFx.intensity.value, 2.5f, Time.deltaTime);
+            if (aimState == playerAimState.Aiming)
+            {
+                cam.orthographicSize = Mathf.MoveTowards(cam.orthographicSize, ZoomIn, 5 * Time.deltaTime);
+                vignetteFx.intensity.value = Mathf.MoveTowards(vignetteFx.intensity.value, 0.4f, Time.deltaTime);
+                chromaticAberrationFx.intensity.value = Mathf.MoveTowards(chromaticAberrationFx.intensity.value, 0.35f, Time.deltaTime);
+                lensDistortionFx.intensity.value = Mathf.MoveTowards(lensDistortionFx.intensity.value, -0.25f, Time.deltaTime);
+                bloomFx.intensity.value = Mathf.MoveTowards(bloomFx.intensity.value, 1.5f, Time.deltaTime);
+            }
+            else
+            {
+                cam.orthographicSize = Mathf.MoveTowards(cam.orthographicSize, ZoomOut, 5 * Time.deltaTime);
+                vignetteFx.intensity.value = Mathf.MoveTowards(vignetteFx.intensity.value, 0.15f, Time.deltaTime);
+                chromaticAberrationFx.intensity.value = Mathf.MoveTowards(chromaticAberrationFx.intensity.value, 0.07f, Time.deltaTime);
+                lensDistortionFx.intensity.value = Mathf.MoveTowards(lensDistortionFx.intensity.value, 0, Time.deltaTime);
+                bloomFx.intensity.value = Mathf.MoveTowards(bloomFx.intensity.value, 2.5f, Time.deltaTime);
+            }
         }
     }
 
@@ -108,22 +110,5 @@ public class PlayerGunHandler : MonoBehaviour
         PrimaryWeapon.SetActive(false);
         SecondaryWeapon.SetActive(true);
         gunState = playerGunsState.Secondary;
-    }
-
-    private void SwitchWeapon(InputAction.CallbackContext ctx)
-    {
-        if(gunState == playerGunsState.Primary)
-        {
-            PrimaryWeapon.SetActive(false);
-            SecondaryWeapon.SetActive(true);
-            gunState = playerGunsState.Secondary;
-        }
-
-        if (gunState == playerGunsState.Secondary)
-        {
-            SecondaryWeapon.SetActive(false);
-            PrimaryWeapon.SetActive(true);
-            gunState = playerGunsState.Primary;
-        }
     }
 }

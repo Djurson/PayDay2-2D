@@ -7,6 +7,8 @@ using UnityEngine.UI;
 using System.IO;
 using System;
 using System.Globalization;
+using UnityEngine.Rendering;
+using System.Collections.Generic;
 
 public class MainMenuHandler : MonoBehaviour
 {
@@ -16,9 +18,9 @@ public class MainMenuHandler : MonoBehaviour
     [SerializeField] private GameObject startupMenu;
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private GameObject offlineHeistSetupMenu;
-    [SerializeField] private GameObject confirmQuitMenu;
     [SerializeField] private GameObject bugreportMenu;
     [SerializeField] private GameObject loadingMenu;
+    [SerializeField] private GameObject optionsMenu;
 
     [Header("Text")]
     [SerializeField] private TextMeshProUGUI versionText;
@@ -39,6 +41,12 @@ public class MainMenuHandler : MonoBehaviour
     [SerializeField] private TMP_Text OffshoreAccountText;
     [SerializeField] private TMP_Text CompletedHeistsText;
     [SerializeField] private TMP_Text PlaytimeText;
+
+    [Header("Options Menu")]
+    [SerializeField] private TMP_Dropdown QualityLevelDropDown;
+    [SerializeField] private RenderPipelineAsset[] QualitySettingsAssets;
+    private Resolution[] Resolutions;
+    [SerializeField] private TMP_Dropdown ResolutionsDropdown;
 
     private int seconds;
     private int minutes;
@@ -61,6 +69,8 @@ public class MainMenuHandler : MonoBehaviour
 
     private void Start()
     {
+        GameManager.instance.heistState = HeistState.Stealth;
+
         if (File.Exists($"{Application.persistentDataPath}/Tips/Tips.txt"))
         {
             if(TipsTextFileText != File.ReadAllText($"{Application.persistentDataPath}/Tips/Tips.txt"))
@@ -80,6 +90,49 @@ public class MainMenuHandler : MonoBehaviour
         }
 
         FirebaseManager.instance.LoadUserDat();
+
+        if (PlayerPrefs.HasKey("QualityLevel"))
+        {
+            QualitySettings.SetQualityLevel(PlayerPrefs.GetInt("QualityLevel"));
+            QualitySettings.renderPipeline = QualitySettingsAssets[PlayerPrefs.GetInt("QualityLevel")];
+        }
+
+        if (PlayerPrefs.HasKey("fullscreen"))
+        {
+            if(PlayerPrefs.GetInt("fullscreen") == 1)
+            {
+                Screen.fullScreen = true;
+            }
+            else if (PlayerPrefs.GetInt("fullscreen") == 0)
+            {
+                Screen.fullScreen = false;
+            }
+        }
+
+        QualityLevelDropDown.value = QualitySettings.GetQualityLevel();
+        ResolutionsVoid();
+    }
+
+    private void ResolutionsVoid()
+    {
+        Resolutions = Screen.resolutions;
+        ResolutionsDropdown.ClearOptions();
+        List<string> options = new List<string>();
+
+        int currentResolutionIndex = 0;
+        for (int i = 0; i < Resolutions.Length; i++)
+        {
+            string option = $"{Resolutions[i].width} x {Resolutions[i].height}";
+            options.Add(option);
+
+            if(Resolutions[i].width == Screen.currentResolution.width && Resolutions[i].height == Screen.currentResolution.height)
+            {
+                currentResolutionIndex = i;
+            }
+        }
+        ResolutionsDropdown.AddOptions(options);
+        ResolutionsDropdown.value = currentResolutionIndex;
+        ResolutionsDropdown.RefreshShownValue();
     }
 
     private void Update()
@@ -115,39 +168,41 @@ public class MainMenuHandler : MonoBehaviour
         startupMenu.SetActive(false);
         savingAnimationGameObject.SetActive(false);
         offlineHeistSetupMenu.SetActive(false);
-        confirmQuitMenu.SetActive(false);
         bugreportMenu.SetActive(false);
         loadingMenu.SetActive(false);
+        optionsMenu.SetActive(false);
     }
 
     public void ClearPopUpUI()
     {
-        confirmQuitMenu.SetActive(false);
         bugreportMenu.SetActive(false);
     }
 
     public void OfflineHeist()
     {
         ClearUI();
+        ClearPopUpUI();
         offlineHeistSetupMenu.SetActive(true);
     }
 
     public void ActivateMainMenu()
     {
         ClearUI();
-        mainMenu.SetActive(true);
-    }
-
-    public void ConfirmQuitMenu()
-    {
         ClearPopUpUI();
-        confirmQuitMenu.SetActive(true);
+        mainMenu.SetActive(true);
     }
 
     public void BugReportMenu()
     {
         ClearPopUpUI();
         bugreportMenu.SetActive(true);
+    }
+
+    public void OptionsMenu()
+    {
+        ClearUI();
+        ClearPopUpUI();
+        optionsMenu.SetActive(true);
     }
 
     public void ExitApplication()
@@ -163,8 +218,35 @@ public class MainMenuHandler : MonoBehaviour
     private IEnumerator changeScene(int _sceneIndex)
     {
         ClearUI();
+        ClearPopUpUI();
         loadingMenu.SetActive(true);
         yield return new WaitForSeconds(3);
         SceneManager.LoadSceneAsync(_sceneIndex);
+    }
+
+    public void ChangeGraphicsQuality(int QualityLevel)
+    {
+        QualitySettings.SetQualityLevel(QualityLevel);
+        QualitySettings.renderPipeline = QualitySettingsAssets[QualityLevel];
+        PlayerPrefs.SetInt("QualityLevel", QualityLevel);
+    }
+
+    public void ChangeFullScreen(bool fullscreen)
+    {
+        Screen.fullScreen = fullscreen;
+        if(fullscreen == true)
+        {
+            PlayerPrefs.SetInt("fullscreen", 1);
+        }
+        else
+        {
+            PlayerPrefs.SetInt("fullscreen", 0);
+        }
+    }
+
+    public void SetResolution(int resolutionIndex)
+    {
+        Resolution resolution = Resolutions[resolutionIndex];
+        Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
     }
 }

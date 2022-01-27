@@ -7,8 +7,8 @@ public enum civilianState
     Normal,
     Panicing,
     Intimidated,
-    CableTied,
-    Calling
+    FollowingPlayer,
+    CableTied
 };
 
 public class CivilianRayCaster : MonoBehaviour
@@ -25,24 +25,27 @@ public class CivilianRayCaster : MonoBehaviour
 
     public float localDetection;
 
+    public float interaction = 2;
+
     private Collider2D PlayerRayCastCollider;
     private Collider2D BagRayCastCollider;
     private Collider2D BodyRayCollider;
+    private Collider2D CivilianCollider;
+
+    private RaycastHit2D hit;
+    private RaycastHit2D hitBag;
+    private RaycastHit2D hitBody;
+    private RaycastHit2D hitCivilian;
 
     [SerializeField] private LayerMask PlayerLayer;
     [SerializeField] private LayerMask BagLayer;
-    [SerializeField] private LayerMask DeadBodyLayer;
-
-    private RaycastHit2D hit;
+    [SerializeField] private LayerMask BodyLayer;
+    [SerializeField] private LayerMask CivilianLayer;
 
     private Vector3 normalizedDir;
-    private Vector2 civillianForward;
-    private float dot;
     public PlayerDetection localPlayerDetection;
 
     public GameObject detectionIcon;
-
-    public GameObject player;
 
     private bool hasAdded = false;
 
@@ -59,110 +62,121 @@ public class CivilianRayCaster : MonoBehaviour
 
     private void checkState()
     {
-        if (localDetection > 0)
+        if (localPlayerDetection != null)
         {
-            if(hasAdded == false)
+            if (localDetection > 0)
             {
-                localPlayerDetection.detectedCivilians.Add(this);
-                hasAdded = true;
+                if (hasAdded == false)
+                {
+                    localPlayerDetection.detectedCivilians.Add(this);
+                    hasAdded = true;
+                }
+            }
+            else if (localDetection == 0)
+                localPlayerDetection.detectedCivilians.Remove(this);
+
+            if (localState != civilianState.CableTied && localState != civilianState.FollowingPlayer)
+            {
+                rayCast();
+                checkRayCast();
+            }
+            else
+            {
+                localDetection = 0;
+                localPlayerDetection.detectedCivilians.Remove(this);
+            }
+
+            if (detectionIcon != null)
+            {
+                if (localDetection == 100)
+                {
+                    detectionIcon.SetActive(true);
+                }
+                if (localDetection != 100)
+                    detectionIcon.SetActive(false);
             }
         }
-        else if (localDetection == 0)
-            localPlayerDetection.detectedCivilians.Remove(this);
-
-        if (localState != civilianState.CableTied)
-        {
-            rayCast();
-            checkRayCast();
-        }
         else
-            localDetection = 0;
-
-        if(detectionIcon != null)
-        {
-            if (localDetection == 100)
-                detectionIcon.SetActive(true);
-            if (localDetection != 100)
-                detectionIcon.SetActive(false);
-        }
+            Debug.LogError("Player Detection Not Set");
     }
 
     private void rayCast()
     {
         PlayerRayCastCollider = Physics2D.OverlapCircle(transform.position, RayCastDistance, PlayerLayer.value);
         BagRayCastCollider = Physics2D.OverlapCircle(transform.position, RayCastDistance, BagLayer.value);
-        BodyRayCollider = Physics2D.OverlapCircle(transform.position, RayCastDistance, DeadBodyLayer.value);
+        BodyRayCollider = Physics2D.OverlapCircle(transform.position, RayCastDistance, BodyLayer.value);
+        CivilianCollider = Physics2D.OverlapCircle(transform.position, RayCastDistance, CivilianLayer.value);
 
         if (PlayerRayCastCollider != null)
         {
-            civillianForward = transform.TransformDirection(Vector2.up);
             normalizedDir = Vector3.Normalize(PlayerRayCastCollider.gameObject.transform.position - this.transform.position);
-
-            dot = Vector2.Dot(civillianForward, normalizedDir);
-
-            if (dot > -0.77f)
-            {
-                hit = Physics2D.Raycast(this.transform.position, normalizedDir, RayCastDistance);
-
-                if (hit.collider != null)
-                {
-                    if (hit.collider.CompareTag("Player"))
-                    {
-                        seeingPlayer = true;
-                    }
-                    if (!hit.collider.CompareTag("Player"))
-                        seeingPlayer = false;
-                }
-                else
-                    seeingPlayer = false;
-            }
-        }
-        else if (BagRayCastCollider != null && BagRayCastCollider.gameObject.CompareTag("Bag"))
-        {
-            civillianForward = transform.TransformDirection(Vector2.up);
-            normalizedDir = Vector3.Normalize(BagRayCastCollider.gameObject.transform.position - this.transform.position);
-
-            dot = Vector2.Dot(civillianForward, normalizedDir);
 
             hit = Physics2D.Raycast(this.transform.position, normalizedDir, RayCastDistance);
 
             if (hit.collider != null)
             {
-                if (hit.collider.CompareTag("Bag") || hit.collider.CompareTag("BodyBag"))
+                if (hit.collider.CompareTag("Player"))
                 {
                     seeingPlayer = true;
                 }
-                if (!hit.collider.CompareTag("Bag") && !hit.collider.CompareTag("BodyBag"))
+                if (!hit.collider.CompareTag("Player"))
+                    seeingPlayer = false;
+            }
+            else
+                seeingPlayer = false;
+        }
+        else if (BagRayCastCollider != null && BagRayCastCollider.gameObject.CompareTag("Bag"))
+        {
+            normalizedDir = Vector3.Normalize(BagRayCastCollider.gameObject.transform.position - this.transform.position);
+
+            hitBag = Physics2D.Raycast(this.transform.position, normalizedDir, RayCastDistance);
+
+            if (hitBag.collider != null)
+            {
+                if (hitBag.collider.CompareTag("Bag") || hit.collider.CompareTag("BodyBag"))
+                {
+                    seeingPlayer = true;
+                }
+                if (!hitBag.collider.CompareTag("Bag") && !hit.collider.CompareTag("BodyBag"))
                     seeingPlayer = false;
             }
             else
                 seeingPlayer = false;
         } else if(BodyRayCollider != null && BodyRayCollider.gameObject.CompareTag("DeadCivilian") || BodyRayCollider != null && BodyRayCollider.gameObject.CompareTag("DeadGuard"))
         {
-            civillianForward = transform.TransformDirection(Vector2.up);
             normalizedDir = Vector3.Normalize(BodyRayCollider.gameObject.transform.position - this.transform.position);
 
-            dot = Vector2.Dot(civillianForward, normalizedDir);
+            hitBody = Physics2D.Raycast(this.transform.position, normalizedDir, RayCastDistance);
 
-            hit = Physics2D.Raycast(this.transform.position, normalizedDir, RayCastDistance);
-
-            if (hit.collider != null)
+            if (hitBody.collider != null && hitBody.collider.gameObject != null)
             {
-                if (hit.collider.CompareTag("DeadCivilian") || hit.collider.CompareTag("DeadGuard"))
+                if (hitBody.collider.gameObject.CompareTag("DeadCivilian") || hitBody.collider.gameObject.CompareTag("DeadGuard"))
                 {
                     seeingPlayer = true;
                 }
-                if (!hit.collider.CompareTag("DeadCivilian") && !hit.collider.CompareTag("DeadGuard"))
+                if (!hitBody.collider.gameObject.CompareTag("DeadCivilian") && !hitBody.collider.gameObject.CompareTag("DeadGuard"))
                     seeingPlayer = false;
             }
             else
                 seeingPlayer = false;
         }
-        else
+        else if (CivilianCollider != null)
         {
+            normalizedDir = Vector3.Normalize(PlayerRayCastCollider.gameObject.transform.position - this.transform.position);
+
+            hitCivilian = Physics2D.Raycast(this.transform.position, normalizedDir, RayCastDistance);
+
+            if (hitCivilian.collider != null)
+            {
+                if (hitCivilian.collider.CompareTag("Civilian") && hitCivilian.collider.GetComponent<CivilianRayCaster>().localState == civilianState.Panicing || hitCivilian.collider.CompareTag("Civilian") && hitCivilian.collider.GetComponent<CivilianRayCaster>().localState == civilianState.CableTied || hitCivilian.collider.CompareTag("Civilian") && hitCivilian.collider.GetComponent<CivilianRayCaster>().localState == civilianState.FollowingPlayer)
+                {
+                    seeingPlayer = true;
+                }
+                if (!hitCivilian.collider.CompareTag("Civilian") && hitCivilian.collider.GetComponent<CivilianRayCaster>().localState == civilianState.Panicing || hitCivilian.collider.CompareTag("Civilian") && hitCivilian.collider.GetComponent<CivilianRayCaster>().localState == civilianState.CableTied || hitCivilian.collider.CompareTag("Civilian") && hitCivilian.collider.GetComponent<CivilianRayCaster>().localState == civilianState.FollowingPlayer)
+                    seeingPlayer = false;
+            }
+        } else 
             seeingPlayer = false;
-            player = null;
-        }
     }
 
     private void checkRayCast()
@@ -176,6 +190,14 @@ public class CivilianRayCaster : MonoBehaviour
                 localDetection = Mathf.MoveTowards(localDetection, 100, 10 * Time.deltaTime);
             if(hit.distance < 2f)
                 localDetection = Mathf.MoveTowards(localDetection, 100, 150 * Time.deltaTime);
+
+            if(hitBag.collider != null)
+            {
+                localDetection = Mathf.MoveTowards(localDetection, 100, 10 * Time.deltaTime);
+            } else if(hitBody.collider != null)
+            {
+                localDetection = Mathf.MoveTowards(localDetection, 100, 50 * Time.deltaTime);
+            }
         }
 
         if (Hearing == true)

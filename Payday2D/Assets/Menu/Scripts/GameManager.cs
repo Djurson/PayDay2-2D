@@ -4,7 +4,9 @@ using UnityEngine.SceneManagement;
 public enum HeistState
 {
     Stealth,
-    Loud
+    Loud,
+    Failed,
+    Paused
 };
 
 public class GameManager : MonoBehaviour
@@ -17,7 +19,7 @@ public class GameManager : MonoBehaviour
     private bool LoadedHeist = false;
 
     [Header("Current Heist")]
-    public HeistState state;
+    public HeistState heistState;
     public int CollectedLootValue;
     public int XpEarned;
     public int BagsCollected;

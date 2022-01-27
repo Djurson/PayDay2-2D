@@ -25,6 +25,9 @@ TagManager:
   - BodyBag
   - FadeOutEffect
   - DeadGuard
+  - Guard
+  - FailedHeistUi
+  - BodyBagCase
   layers:
   - Default
   - TransparentFX
@@ -39,8 +42,8 @@ TagManager:
   - GoldBars
   - BulletImpact
   - DeadBody
-  - 
-  - 
+  - Guard
+  - BodyBagCase
   - 
   - 
   - 

@@ -44,6 +44,8 @@ public class playerInteraction : MonoBehaviour
     public TextMeshProUGUI playerInfoText;
     string interactionTextBinding;
     public int bodyBags;
+    public int Pagers = 4;
+    public int cableTies = 9;
 
     [Header("Scripts")]
     private PlayerMovement _playerMovement;
@@ -130,6 +132,56 @@ public class playerInteraction : MonoBehaviour
                     interactionMax = hit.collider.gameObject.GetComponent<localCivilianHandler>().interactionTime;
                     playerInfoText.text = $"Hold [{interactionTextBinding.ToUpper()}] To Body Bag The Dead Body";
                 }
+
+                if (hit.collider.CompareTag("DeadGuard"))
+                {
+                    if(hit.collider.GetComponent<LocalGuardHandler>().hasSetPager == true && bodyBags > 0)
+                    {
+                        playerInfoText.enabled = true;
+                        closeByInteractebleObject = hit.collider.gameObject;
+                        interactionMax = hit.collider.gameObject.GetComponent<LocalGuardHandler>().interactionTime;
+                        playerInfoText.text = $"Hold [{interactionTextBinding.ToUpper()}] To Body Bag The Dead Body";
+                    }
+
+                    if(hit.collider.GetComponent<LocalGuardHandler>().hasSetPager == false)
+                    {
+                        closeByInteractebleObject = hit.collider.gameObject;
+                        playerInfoText.enabled = true;
+                        interactionMax = hit.collider.gameObject.GetComponent<LocalGuardHandler>().PagerInteraction;
+                        playerInfoText.text = $"Hold [{interactionTextBinding.ToUpper()}] To Answer Pager";
+                    }
+                }
+
+                if (hit.collider.CompareTag("Civilian"))
+                {
+                    if(hit.collider.gameObject.GetComponent<CivilianRayCaster>().localState == civilianState.Panicing && cableTies > 0)
+                    {
+                        closeByInteractebleObject = hit.collider.gameObject;
+                        playerInfoText.enabled = true;
+                        interactionMax = hit.collider.GetComponent<CivilianRayCaster>().interaction;
+                        playerInfoText.text = $"Hold [{interactionTextBinding.ToUpper()} To Cable Tie Civilian]";
+                    } else if(hit.collider.gameObject.GetComponent<CivilianRayCaster>().localState == civilianState.CableTied)
+                    {
+                        closeByInteractebleObject = hit.collider.gameObject;
+                        playerInfoText.enabled = true;
+                        interactionMax = hit.collider.GetComponent<CivilianRayCaster>().interaction;
+                        playerInfoText.text = $"Hold [{interactionTextBinding.ToUpper()} To Move Civilian]";
+                    } else if(hit.collider.gameObject.GetComponent<CivilianRayCaster>().localState == civilianState.FollowingPlayer)
+                    {
+                        closeByInteractebleObject = hit.collider.gameObject;
+                        playerInfoText.enabled = true;
+                        interactionMax = hit.collider.GetComponent<CivilianRayCaster>().interaction;
+                        playerInfoText.text = $"Hold [{interactionTextBinding.ToUpper()} To Sit Civilian Down]";
+                    }
+                }
+
+                if (hit.collider.CompareTag("BodyBagCase") && hit.collider.GetComponent<BodyBagCaseHandler>().BodyBags > 0 && bodyBags < 2)
+                {
+                    closeByInteractebleObject = hit.collider.gameObject;
+                    playerInfoText.enabled = true;
+                    interactionMax = hit.collider.GetComponent<BodyBagCaseHandler>().interactionTime;
+                    playerInfoText.text = $"Hold [{interactionTextBinding.ToUpper()} To Grab A Body Bag]";
+                }
             }
         }
 
@@ -150,6 +202,11 @@ public class playerInteraction : MonoBehaviour
                 interaction = Mathf.MoveTowards(interaction, interactionMax, Time.deltaTime);
                 interactionProgress.fillAmount = interaction / interactionMax;
             }
+        }
+
+        if(closeByInteractebleObject != null && interacting == 1 && closeByInteractebleObject.CompareTag("DeadGuard") && closeByInteractebleObject.GetComponent<LocalGuardHandler>().hasSetPager == false)
+        {
+            closeByInteractebleObject.GetComponent<LocalGuardHandler>().answeringPager = true;
         }
 
         if (interacting == 0)
@@ -179,7 +236,7 @@ public class playerInteraction : MonoBehaviour
     {
         if(closeByInteractebleObject != null)
         {
-            if (closeByInteractebleObject.CompareTag("Bag") || closeByInteractebleObject.CompareTag("DrillBag") || hit.collider.CompareTag("GoldBars") || hit.collider.CompareTag("DeadCivilian") || closeByInteractebleObject.CompareTag("BodyBag"))
+            if (closeByInteractebleObject.CompareTag("Bag") || closeByInteractebleObject.CompareTag("DrillBag") || hit.collider.CompareTag("GoldBars") || hit.collider.CompareTag("DeadCivilian") || closeByInteractebleObject.CompareTag("BodyBag") || closeByInteractebleObject.CompareTag("DeadGuard"))
             {
                 if(interaction == interactionMax)
                 {
@@ -212,7 +269,49 @@ public class playerInteraction : MonoBehaviour
                         Destroy(closeByInteractebleObject);
                         closeByInteractebleObject = null;
                         _playerCarry = playerCarryingState.Person;
+                    } else if (closeByInteractebleObject.CompareTag("DeadGuard"))
+                    {
+                        if (closeByInteractebleObject.GetComponent<LocalGuardHandler>().hasSetPager == true)
+                        {
+                            bodyBags -= 1;
+                            throwableObject = BodyBagPrefab;
+                            var instatiated = Instantiate(BodyBagChildPrefab, transform);
+                            drillBagChild = instatiated.gameObject;
+                            Destroy(closeByInteractebleObject);
+                            closeByInteractebleObject = null;
+                            _playerCarry = playerCarryingState.Person;
+                        }
+                        else if (closeByInteractebleObject.GetComponent<LocalGuardHandler>().hasSetPager == false && Pagers > 0)
+                        {
+                            closeByInteractebleObject.GetComponent<LocalGuardHandler>().hasSetPager = true;
+                            closeByInteractebleObject.GetComponent<LocalGuardHandler>().answeringPager = false;
+                            closeByInteractebleObject = null;
+                            interaction = 0;
+                        } else if(closeByInteractebleObject.GetComponent<LocalGuardHandler>().hasSetPager == false && Pagers <= 0)
+                        {
+                            closeByInteractebleObject.GetComponent<LocalGuardHandler>().hasSetPager = false;
+                            closeByInteractebleObject.GetComponent<LocalGuardHandler>().answeringPager = false;
+                            closeByInteractebleObject = null;
+                            interaction = 0;
+                        }
                     }
+                }
+            }
+        }
+    }
+
+    private void CheckBodyBagCaseInteraction()
+    {
+        if(closeByInteractebleObject != null)
+        {
+
+            if (closeByInteractebleObject.CompareTag("BodyBagCase"))
+            {
+                if(interaction == interactionMax)
+                {
+                    closeByInteractebleObject.GetComponent<BodyBagCaseHandler>().RemoveBodyBag();
+                    bodyBags += 1;
+                    closeByInteractebleObject = null;
                 }
             }
         }
@@ -231,6 +330,34 @@ public class playerInteraction : MonoBehaviour
                         closeByInteractebleObject.GetComponent<DrillInteraction>().startDrill();
                         interactionMax = 0;
                         closeByInteractebleObject = null;
+                    }
+                }
+            }
+        }
+    }
+
+    private void CheckCivilianInteraction()
+    {
+        if(closeByInteractebleObject != null)
+        {
+            if (closeByInteractebleObject.CompareTag("Civilian"))
+            {
+                if(interaction == interactionMax)
+                {
+                    if(closeByInteractebleObject.GetComponent<CivilianRayCaster>().localState == civilianState.Panicing || closeByInteractebleObject.GetComponent<CivilianRayCaster>().localState == civilianState.FollowingPlayer)
+                    {
+                        if(closeByInteractebleObject.GetComponent<CivilianRayCaster>().localState == civilianState.Panicing)
+                        {
+                            cableTies -= 1;
+                        }
+                        closeByInteractebleObject.GetComponent<CivilianRayCaster>().localState = civilianState.CableTied;
+                        closeByInteractebleObject = null;
+                        interaction = 0;
+                    } else if(closeByInteractebleObject.GetComponent<CivilianRayCaster>().localState == civilianState.CableTied)
+                    {
+                        closeByInteractebleObject.GetComponent<CivilianRayCaster>().localState = civilianState.FollowingPlayer;
+                        closeByInteractebleObject = null;
+                        interaction = 0;
                     }
                 }
             }
@@ -261,30 +388,35 @@ public class playerInteraction : MonoBehaviour
 
     private void Update()
     {
-        string interactionBinding = playerControls.KeyboardInputs.Interact.GetBindingDisplayString();
-        interactionTextBinding = interactionBinding.ToLower().Replace("press ", "");
-
-        updateInteraction();
-        playerInput();
-
-        if (_playerMovement.playerMode == playerMode.Robbing)
+        if(GameManager.instance.heistState != HeistState.Failed)
         {
-            checkDoorInteraction();
-            checkBagInteraction();
-            checkDrillInteraction();
-            rayCast();
+            string interactionBinding = playerControls.KeyboardInputs.Interact.GetBindingDisplayString();
+            interactionTextBinding = interactionBinding.ToLower().Replace("press ", "");
+
+            updateInteraction();
+            playerInput();
+
+            if (_playerMovement.playerMode == playerMode.Robbing)
+            {
+                checkDoorInteraction();
+                checkBagInteraction();
+                checkDrillInteraction();
+                CheckCivilianInteraction();
+                CheckBodyBagCaseInteraction();
+                rayCast();
+            }
+
+            if (closeByInteractebleObject == null)
+            {
+                playerInfoText.enabled = false;
+                interactionMax = 0;
+            }
+
+            if (interaction > 0 && interactionMax > 0)
+                _playerMovement.isInteracting = true;
+
+            if (interaction == 0)
+                _playerMovement.isInteracting = false;
         }
-
-        if (closeByInteractebleObject == null)
-        {
-            playerInfoText.enabled = false;
-            interactionMax = 0;
-        }
-
-        if(interaction > 0)
-            _playerMovement.isInteracting = true;
-
-        if (interaction == 0)
-            _playerMovement.isInteracting = false;
     }
 }

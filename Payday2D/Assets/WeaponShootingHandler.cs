@@ -26,7 +26,7 @@ public class WeaponShootingHandler : MonoBehaviour
     public int TotalAmmo; 
     public int MagAmmo;
     [SerializeField] private int MaxMagAmmo;
-    [SerializeField] private bool isReloading = false;
+    public bool isReloading = false;
     [SerializeField] private GameObject BulletPrefab;
     [SerializeField] private Transform BulletStart;
     [Space(5)]
@@ -63,21 +63,39 @@ public class WeaponShootingHandler : MonoBehaviour
 
     private void Update()
     {
-        PlayerInput();
-        ADSAnimations();
-        Shooting();
+        if(GameManager.instance.heistState != HeistState.Failed)
+        {
+            PlayerInput();
+            ADSAnimations();
+            Shooting();
+        }
+    }
+
+    private void OnEnable()
+    {
+        playerInput.KeyboardInputs.ChangeFireMode.performed += ChangeFireMode;
+        playerInput.KeyboardInputs.MouseFire.performed += SemiAutomaticFire;
+    }
+
+    private void OnDisable()
+    {
+        mouseFireInput = 0;
+        reloadInput = 0;
+        playerInput.KeyboardInputs.ChangeFireMode.performed -= ChangeFireMode;
+        playerInput.KeyboardInputs.MouseFire.performed -= SemiAutomaticFire;
     }
 
     private void PlayerInput()
     {
-        mouseFireInput = playerInput.KeyboardInputs.MouseFire.ReadValue<float>();
-        reloadInput = playerInput.KeyboardInputs.Reload.ReadValue<float>();
-        playerInput.KeyboardInputs.ChangeFireMode.performed += ChangeFireMode;
-        playerInput.KeyboardInputs.MouseFire.performed += SemiAutomaticFire;
-
-        if(reloadInput == 1)
+        if (this.gameObject.activeInHierarchy)
         {
-            StartCoroutine("Reload");
+            mouseFireInput = playerInput.KeyboardInputs.MouseFire.ReadValue<float>();
+            reloadInput = playerInput.KeyboardInputs.Reload.ReadValue<float>();
+
+            if (reloadInput == 1)
+            {
+                StartCoroutine("Reload");
+            }
         }
     }
 
@@ -104,7 +122,7 @@ public class WeaponShootingHandler : MonoBehaviour
 
     private void Shooting()
     {
-        if(MagAmmo == 0 || isReloading) { return; }
+        if (MagAmmo == 0 || isReloading) { return; }
 
         if (mouseFireInput == 1 && MagAmmo > 0 && gunHandler.aimState == playerAimState.NotAiming && localFireMode == WeaponFireMode.Auto)
         {
@@ -135,31 +153,34 @@ public class WeaponShootingHandler : MonoBehaviour
 
     private void SemiAutomaticFire(InputAction.CallbackContext ctx)
     {
-        if (MagAmmo == 0 || isReloading) { return; }
-
-        if (MagAmmo > 0 && gunHandler.aimState == playerAimState.NotAiming && localFireMode == WeaponFireMode.Semi)
+        if(GameManager.instance.heistState != HeistState.Failed)
         {
-            if (Time.time - LastTimeFired > 1 / FireRate)
+            if (MagAmmo == 0 || isReloading) { return; }
+
+            if (MagAmmo > 0 && gunHandler.aimState == playerAimState.NotAiming && localFireMode == WeaponFireMode.Semi)
             {
-                LastTimeFired = Time.time;
-                RootTransform.localRotation = Quaternion.Euler(0, 0, Random.Range(RecoilAiming.x, RecoilAiming.y));
-                MagAmmo -= 1;
-                var instatiatedBullet = Instantiate(BulletPrefab, BulletStart.position, Quaternion.identity);
-                instatiatedBullet.gameObject.GetComponent<BulletImpact>().damage = damage;
-                instatiatedBullet.gameObject.GetComponent<Rigidbody2D>().velocity = Player.transform.up * 20;
+                if (Time.time - LastTimeFired > 1 / FireRate)
+                {
+                    LastTimeFired = Time.time;
+                    RootTransform.localRotation = Quaternion.Euler(0, 0, Random.Range(RecoilAiming.x, RecoilAiming.y));
+                    MagAmmo -= 1;
+                    var instatiatedBullet = Instantiate(BulletPrefab, BulletStart.position, Quaternion.identity);
+                    instatiatedBullet.gameObject.GetComponent<BulletImpact>().damage = damage;
+                    instatiatedBullet.gameObject.GetComponent<Rigidbody2D>().velocity = Player.transform.up * 20;
+                }
             }
-        }
 
-        if (MagAmmo > 0 && gunHandler.aimState == playerAimState.Aiming && localFireMode == WeaponFireMode.Semi)
-        {
-            if (Time.time - LastTimeFired > 1 / FireRate)
+            if (MagAmmo > 0 && gunHandler.aimState == playerAimState.Aiming && localFireMode == WeaponFireMode.Semi)
             {
-                LastTimeFired = Time.time;
-                RootTransform.localRotation = Quaternion.Euler(0, 0, Random.Range(RecoilAiming.x, RecoilAiming.y));
-                MagAmmo -= 1;
-                var instatiatedBullet = Instantiate(BulletPrefab, BulletStart.position, Quaternion.identity);
-                instatiatedBullet.gameObject.GetComponent<BulletImpact>().damage = damage;
-                instatiatedBullet.gameObject.GetComponent<Rigidbody2D>().velocity = Player.transform.up * 20;
+                if (Time.time - LastTimeFired > 1 / FireRate)
+                {
+                    LastTimeFired = Time.time;
+                    RootTransform.localRotation = Quaternion.Euler(0, 0, Random.Range(RecoilAiming.x, RecoilAiming.y));
+                    MagAmmo -= 1;
+                    var instatiatedBullet = Instantiate(BulletPrefab, BulletStart.position, Quaternion.identity);
+                    instatiatedBullet.gameObject.GetComponent<BulletImpact>().damage = damage;
+                    instatiatedBullet.gameObject.GetComponent<Rigidbody2D>().velocity = Player.transform.up * 20;
+                }
             }
         }
     }

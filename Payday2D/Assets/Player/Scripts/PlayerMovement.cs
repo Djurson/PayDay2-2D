@@ -79,27 +79,40 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        playerInput();
-
-        if (ShiftInput == 1 && _playerInteraction._playerCarry == playerCarryingState.Nothing)
+        if(GameManager.instance.heistState != HeistState.Failed)
         {
-            movementSpeed = runSpeed;
+            playerInput();
+
+            if (ShiftInput == 1 && _playerInteraction._playerCarry == playerCarryingState.Nothing)
+            {
+                movementSpeed = runSpeed;
+            }
+            else
+                movementSpeed = moveSpeed;
         }
-        else
-            movementSpeed = moveSpeed;
     }
 
     private void FixedUpdate()
     {
-        if(isInteracting == false)
+        if(GameManager.instance.heistState != HeistState.Failed)
         {
-            movementDirection = new Vector3(movement.x, movement.y, 0);
-            movementDirection.Normalize();
+            if (isInteracting == false)
+            {
+                movementDirection = new Vector3(movement.x, movement.y, 0);
+                movementDirection.Normalize();
 
-            rb.velocity = movementDirection * movementSpeed * Time.deltaTime;
+                rb.velocity = movementDirection * movementSpeed * Time.deltaTime;
+            }
+
+            if (isInteracting == true)
+            {
+                movementDirection = Vector3.zero;
+                movementDirection.Normalize();
+
+                rb.velocity = movementDirection * movementSpeed * Time.deltaTime;
+            }
         }
-
-        if(isInteracting == true)
+        else
         {
             movementDirection = Vector3.zero;
             movementDirection.Normalize();

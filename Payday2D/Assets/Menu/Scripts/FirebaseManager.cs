@@ -128,6 +128,7 @@ public class FirebaseManager : MonoBehaviour
                         File.CreateText($"{Application.persistentDataPath}/Tips/Tips.txt");
                     }
                 }
+                AuthUiManager.instance.loadingScreen();
                 GameManager.instance.ChangeScene(loadSceneIndex);
             }
             else

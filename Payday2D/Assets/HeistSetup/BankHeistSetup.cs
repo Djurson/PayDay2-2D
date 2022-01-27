@@ -22,6 +22,7 @@ public enum bodyBagsPosition
     AboveBank,
     RightSideOfBank,
     InsideBank,
+    None,
 };
 
 public class BankHeistSetup : MonoBehaviour
@@ -92,6 +93,7 @@ public class BankHeistSetup : MonoBehaviour
 
     private void Start()
     {
+        GameManager.instance.heistState = HeistState.Stealth;
         if (FirebaseManager.instance.user != null)
         {
             user1DisplayText.text = $"<color=#FF855F>{textBeforeUserName}</color=#FF855F>           <color=#ffffff>{FirebaseManager.instance.user.DisplayName}           {playerStateString}</color=#ffffff>";
@@ -106,6 +108,7 @@ public class BankHeistSetup : MonoBehaviour
         ClearUI();
         ClearDrillIcons();
         ClearBodyBagIcons();
+        PrePlanningBodyBagClearColors();
         MainSetupMenu.SetActive(true);
         PlayerMenu();
     }
