@@ -100,14 +100,6 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
-                },
-                {
-                    "name": "MouseSwitchWeapon",
-                    "type": "Value",
-                    "id": "2d6a053f-5d02-4aea-9073-1d9d034221c7",
-                    "expectedControlType": "Axis",
-                    "processors": "",
-                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -262,17 +254,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "SwitchSecondary",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "933275b9-7d32-4cbc-800e-e9d2eb3a45cd",
-                    "path": "<Mouse>/scroll/y",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MouseSwitchWeapon",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

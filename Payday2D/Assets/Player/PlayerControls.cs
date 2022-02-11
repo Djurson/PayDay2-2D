@@ -113,14 +113,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
-                },
-                {
-                    ""name"": ""MouseSwitchWeapon"",
-                    ""type"": ""Value"",
-                    ""id"": ""2d6a053f-5d02-4aea-9073-1d9d034221c7"",
-                    ""expectedControlType"": ""Axis"",
-                    ""processors"": """",
-                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -277,17 +269,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""SwitchSecondary"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""933275b9-7d32-4cbc-800e-e9d2eb3a45cd"",
-                    ""path"": ""<Mouse>/scroll/y"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""MouseSwitchWeapon"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -308,7 +289,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_KeyboardInputs_ChangeFireMode = m_KeyboardInputs.FindAction("ChangeFireMode", throwIfNotFound: true);
         m_KeyboardInputs_SwitchPrimaryWeapon = m_KeyboardInputs.FindAction("SwitchPrimaryWeapon", throwIfNotFound: true);
         m_KeyboardInputs_SwitchSecondary = m_KeyboardInputs.FindAction("SwitchSecondary", throwIfNotFound: true);
-        m_KeyboardInputs_MouseSwitchWeapon = m_KeyboardInputs.FindAction("MouseSwitchWeapon", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -370,7 +350,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_KeyboardInputs_ChangeFireMode;
     private readonly InputAction m_KeyboardInputs_SwitchPrimaryWeapon;
     private readonly InputAction m_KeyboardInputs_SwitchSecondary;
-    private readonly InputAction m_KeyboardInputs_MouseSwitchWeapon;
     public struct KeyboardInputsActions
     {
         private @PlayerControls m_Wrapper;
@@ -387,7 +366,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @ChangeFireMode => m_Wrapper.m_KeyboardInputs_ChangeFireMode;
         public InputAction @SwitchPrimaryWeapon => m_Wrapper.m_KeyboardInputs_SwitchPrimaryWeapon;
         public InputAction @SwitchSecondary => m_Wrapper.m_KeyboardInputs_SwitchSecondary;
-        public InputAction @MouseSwitchWeapon => m_Wrapper.m_KeyboardInputs_MouseSwitchWeapon;
         public InputActionMap Get() { return m_Wrapper.m_KeyboardInputs; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -433,9 +411,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @SwitchSecondary.started -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnSwitchSecondary;
                 @SwitchSecondary.performed -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnSwitchSecondary;
                 @SwitchSecondary.canceled -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnSwitchSecondary;
-                @MouseSwitchWeapon.started -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnMouseSwitchWeapon;
-                @MouseSwitchWeapon.performed -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnMouseSwitchWeapon;
-                @MouseSwitchWeapon.canceled -= m_Wrapper.m_KeyboardInputsActionsCallbackInterface.OnMouseSwitchWeapon;
             }
             m_Wrapper.m_KeyboardInputsActionsCallbackInterface = instance;
             if (instance != null)
@@ -476,9 +451,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @SwitchSecondary.started += instance.OnSwitchSecondary;
                 @SwitchSecondary.performed += instance.OnSwitchSecondary;
                 @SwitchSecondary.canceled += instance.OnSwitchSecondary;
-                @MouseSwitchWeapon.started += instance.OnMouseSwitchWeapon;
-                @MouseSwitchWeapon.performed += instance.OnMouseSwitchWeapon;
-                @MouseSwitchWeapon.canceled += instance.OnMouseSwitchWeapon;
             }
         }
     }
@@ -497,6 +469,5 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnChangeFireMode(InputAction.CallbackContext context);
         void OnSwitchPrimaryWeapon(InputAction.CallbackContext context);
         void OnSwitchSecondary(InputAction.CallbackContext context);
-        void OnMouseSwitchWeapon(InputAction.CallbackContext context);
     }
 }
