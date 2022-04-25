@@ -19,6 +19,7 @@ public class MainMenuHandler : MonoBehaviour
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private GameObject offlineHeistSetupMenu;
     [SerializeField] private GameObject bugreportMenu;
+    [SerializeField] private GameObject patchNotesMenu;
     [SerializeField] private GameObject loadingMenu;
     [SerializeField] private GameObject optionsMenu;
 
@@ -176,6 +177,7 @@ public class MainMenuHandler : MonoBehaviour
     public void ClearPopUpUI()
     {
         bugreportMenu.SetActive(false);
+        patchNotesMenu.SetActive(false);
     }
 
     public void OfflineHeist()
@@ -196,6 +198,12 @@ public class MainMenuHandler : MonoBehaviour
     {
         ClearPopUpUI();
         bugreportMenu.SetActive(true);
+    }
+
+    public void PatchNotesMenu()
+    {
+        ClearPopUpUI();
+        patchNotesMenu.SetActive(true);
     }
 
     public void OptionsMenu()

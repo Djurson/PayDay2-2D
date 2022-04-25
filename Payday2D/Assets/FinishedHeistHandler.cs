@@ -411,6 +411,7 @@ public class FinishedHeistHandler : MonoBehaviour
             FirebaseManager.instance.UpdateUserData(LevelHandler.instance.levelSystem.level, LevelHandler.instance.levelSystem.experience, SpendableCashMoneyInt + GameManager.instance.PlayerCurrentSpendableCash, OffshoreAccountMoneyInt + GameManager.instance.PlayerCurrentOffshoreAccount, GameManager.instance.HeistsCompleted += 1, GameManager.instance.PlayTimeInHeistsSeconds);
             SceneManager.LoadSceneAsync(1);
             MainMenuHandler.instance.firstTimeLoading = false;
+            GameManager.instance.ClearData();
         }
     }
     #endregion xp menu

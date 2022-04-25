@@ -47,6 +47,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void ClearData()
+    {
+        HeistBaseXp = 0;
+        HeistBasePayout = 0;
+        MoneyTakenForKillingCivilians = 0;
+        GuardsKilled = 0;
+        CiviliansKilled = 0;
+        BagsCollected = 0;
+        XpEarned = 0;
+        CollectedLootValue = 0;
+    }
+
     private void Update()
     {
         if(SceneManager.GetActiveScene().buildIndex == 3 && LoadedHeist == false)

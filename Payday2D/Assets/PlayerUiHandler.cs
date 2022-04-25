@@ -100,6 +100,7 @@ public class PlayerUiHandler : MonoBehaviour
     public void LoadLevel(int levelIndex)
     {
         PlaytimeHandler.instance.SendData();
+        GameManager.instance.ClearData();
         FirebaseManager.instance.UpdateUserData(LevelHandler.instance.levelSystem.level, LevelHandler.instance.levelSystem.experience, GameManager.instance.PlayerCurrentSpendableCash, GameManager.instance.PlayerCurrentOffshoreAccount, GameManager.instance.HeistsCompleted, GameManager.instance.PlayTimeInHeistsSeconds + PlaytimeHandler.instance.playtime);
         SceneManager.LoadSceneAsync(levelIndex);
     }
